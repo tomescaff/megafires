@@ -1,6 +1,6 @@
 import pandas as pd
 
-f# define path of csv file with data
+# define path of csv file with data
 filepath = '../../../megafires_data/series/tmax_january_mon_mean_QN.csv'
 
 # read the csv file using pandas
