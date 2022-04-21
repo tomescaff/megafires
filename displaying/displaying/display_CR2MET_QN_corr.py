@@ -7,17 +7,15 @@ import matplotlib.ticker as mticker
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
+import cmaps
 import sys
 
 sys.path.append('../../processing')
 
 import processing.utils as ut
 
-# get CR2MET january tmax series
-da = ut.get_CR2MET_jan()
-
-# compute the climatology
-clim = da.mean('time')
+# get CR2MET january tmax corr with QN time series
+da = ut.get_corr_CR2MET_QN_jan_tmax()
 
 # create figure
 fig = plt.figure(figsize=(8,7))
@@ -54,7 +52,7 @@ gl.xlocator = mticker.FixedLocator(xticks)
 gl.ylocator = mticker.FixedLocator(yticks)
 
 # plot the climatology and reshape color bar
-pcm = ax.pcolormesh(clim.lon.values, clim.lat.values, clim.values, cmap='jet', alpha=0.8, zorder=3, vmin=-3, vmax=37)
+pcm = ax.pcolormesh(da.lon.values, da.lat.values, da.values, cmap='jet', alpha=0.8, zorder=3, vmin=-0.8, vmax=0.8)
 cbar = plt.colorbar(pcm, aspect = 40, pad=0.03)
 
 # draw the coastlines
@@ -76,7 +74,7 @@ for tick in ax.yaxis.get_major_ticks():
 
 # set title
 cbar.ax.get_yaxis().labelpad = 12
-cbar.ax.set_ylabel('January Tmax 1979-2018 Climatology (ºC) ', fontdict={'fontsize':10})
+cbar.ax.set_ylabel('January Tmax 1979-2018 CR2MET - QN correlation ', fontdict={'fontsize':10})
 
-plt.savefig('../../../megafires_data/png/CR2MET_jan_clim.png', dpi=300)
+plt.savefig('../../../megafires_data/png/CR2MET_QN_tmax_corr_1979_2018.png', dpi=300)
 plt.show()

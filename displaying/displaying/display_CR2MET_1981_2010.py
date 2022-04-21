@@ -16,6 +16,9 @@ import processing.utils as ut
 # get CR2MET january tmax series
 da = ut.get_CR2MET_jan()
 
+# select time
+da = da.sel(time=slice('1981-01-01','2010-12-31'))
+
 # compute the climatology
 clim = da.mean('time')
 
@@ -76,7 +79,7 @@ for tick in ax.yaxis.get_major_ticks():
 
 # set title
 cbar.ax.get_yaxis().labelpad = 12
-cbar.ax.set_ylabel('January Tmax 1979-2018 Climatology (ºC) ', fontdict={'fontsize':10})
+cbar.ax.set_ylabel('January Tmax 1981-2010 Climatology (ºC) ', fontdict={'fontsize':10})
 
-plt.savefig('../../../megafires_data/png/CR2MET_jan_clim.png', dpi=300)
+plt.savefig('../../../megafires_data/png/CR2MET_jan_clim_1981_2010.png', dpi=300)
 plt.show()

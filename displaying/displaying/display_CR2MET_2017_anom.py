@@ -14,10 +14,7 @@ sys.path.append('../../processing')
 import processing.utils as ut
 
 # get CR2MET january tmax series
-da = ut.get_CR2MET_jan()
-
-# compute the climatology
-clim = da.mean('time')
+da = ut.get_CR2MET_2017_anom()
 
 # create figure
 fig = plt.figure(figsize=(8,7))
@@ -54,7 +51,7 @@ gl.xlocator = mticker.FixedLocator(xticks)
 gl.ylocator = mticker.FixedLocator(yticks)
 
 # plot the climatology and reshape color bar
-pcm = ax.pcolormesh(clim.lon.values, clim.lat.values, clim.values, cmap='jet', alpha=0.8, zorder=3, vmin=-3, vmax=37)
+pcm = ax.pcolormesh(da.lon.values, da.lat.values, da.values, cmap='jet', alpha=0.8, zorder=3)#, vmin=-3, vmax=37)
 cbar = plt.colorbar(pcm, aspect = 40, pad=0.03)
 
 # draw the coastlines
@@ -74,9 +71,12 @@ for tick in ax.xaxis.get_major_ticks():
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(8) 
 
+circle = plt.Circle((-70.6828, -33.4450), 0.5, color='b', fill=False, zorder=4, lw=0.5)
+ax.add_patch(circle)
+
 # set title
 cbar.ax.get_yaxis().labelpad = 12
-cbar.ax.set_ylabel('January Tmax 1979-2018 Climatology (ºC) ', fontdict={'fontsize':10})
+cbar.ax.set_ylabel('January 2017 Tmax Anomaly (ºC) ', fontdict={'fontsize':10})
 
-plt.savefig('../../../megafires_data/png/CR2MET_jan_clim.png', dpi=300)
+plt.savefig('../../../megafires_data/png/CR2MET_jan_2017_tmax_anom.png', dpi=300)
 plt.show()
