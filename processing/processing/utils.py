@@ -92,3 +92,61 @@ def get_CR2MET_2017_anom():
 
     return anom
 
+# get return period function from QN station data
+def get_QN_tau():
+
+    # get QN series
+    da = get_QN_series()
+
+    n = da.size
+
+    # sort values
+    z = da.values
+    z = np.sort(z)
+
+    # get unique values
+    u = np.unique(z)
+
+    m = u.size
+
+    # create matrix for tail probability and tau
+    tail = np.zeros((m,))
+    tau = np.zeros((m,))
+
+    # compute tail and tau
+    for i in range(m):
+        x = u[i]
+        tail[i] = np.sum(z>=x)/n
+        tau[i] = 1/tail[i]
+
+    return u, tau
+
+# get return period function from QN station data without 2017 max
+def get_QN_tau_remove_max():
+
+    # get QN series
+    da = get_QN_series()
+
+    n = da.size
+
+    # sort values
+    z = da.values
+    z = np.sort(z)
+    z = z[:-1]
+
+    # get unique values
+    u = np.unique(z)
+
+    m = u.size
+
+    # create matrix for tail probability and tau
+    tail = np.zeros((m,))
+    tau = np.zeros((m,))
+
+    # compute tail and tau
+    for i in range(m):
+        x = u[i]
+        tail[i] = np.sum(z>=x)/n
+        tau[i] = 1/tail[i]
+
+    return u, tau
