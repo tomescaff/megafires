@@ -15,6 +15,9 @@ import numpy as np
 # get Quinta Normal time series
 da = ut.get_QN_series()
 
+# remove 2017 value
+da = da.where(da.time.dt.year != 2017, drop = True)
+
 # fit normal dist
 normfit = norm.fit(da.values)
 
@@ -34,7 +37,7 @@ stat, p_gumr = kstest(da.values, 'gumbel_r', gumrfit)
 
 
 # compute histogram
-hist, bins = np.histogram(da.values, bins=np.arange(26,34+2, 0.5), density=True)
+hist, bins = np.histogram(da.values, bins=np.arange(26,34+0.5, 0.5), density=True)
 
 # create figure
 fig = plt.figure(figsize=(8,6))
@@ -42,7 +45,7 @@ fig = plt.figure(figsize=(8,6))
 # plot the histogram
 width = 0.9 * (bins[1] - bins[0])
 center = (bins[:-1] + bins[1:]) / 2
-plt.bar(center, hist, align='center', width=width, edgecolor='blue', facecolor='lightskyblue', color='blue', alpha = 0.75, label = 'QN Jan Tmax')
+plt.bar(center, hist, align='center', width=width, edgecolor='red', facecolor='lightcoral', color='red', alpha = 0.75, label = 'QN Jan Tmax 2017 removed')
 
 # plot the PDF
 xmin, xmax = plt.xlim()
@@ -65,7 +68,7 @@ plt.xlim([26,34])
 plt.xlabel('January Tmax (ºC)')
 plt.ylabel('PDF')
 plt.title('January Tmax distribution at Quinta Normal')
-plt.savefig('../../../megafires_data/png/QN_pdf.png', dpi=300)
+plt.savefig('../../../megafires_data/png/QN_pdf_2017_removed.png', dpi=300)
 plt.show()
     
 

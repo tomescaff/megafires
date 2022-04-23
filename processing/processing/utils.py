@@ -150,3 +150,31 @@ def get_QN_tau_remove_max():
         tau[i] = 1/tail[i]
 
     return u, tau
+
+# get return period function from parametric distribution
+def get_param_tau(param_fun, args):
+
+    # get random values
+    z = param_fun(*args, size=1000) 
+
+    n = z.size
+
+    # sort values
+    z = np.sort(z)
+
+    # get unique values
+    u = np.unique(z)
+
+    m = u.size
+
+    # create matrix for tail probability and tau
+    tail = np.zeros((m,))
+    tau = np.zeros((m,))
+
+    # compute tail and tau
+    for i in range(m):
+        x = u[i]
+        tail[i] = np.sum(z>=x)/n
+        tau[i] = 1/tail[i]
+
+    return u, tau
