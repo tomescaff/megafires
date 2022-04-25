@@ -67,5 +67,5 @@ df.loc['QN 2017 parametric tau (Norm)','2017 removed'] = qn_tau_parametric_norm_
 df.loc['QN 2017 parametric tau (GEV)','2017 removed'] = qn_tau_parametric_gev_2017r.squeeze().round(2)
 df.loc['QN 2017 parametric tau (Gumbel)','2017 removed'] = qn_tau_parametric_gum_2017r.squeeze().round(2)
 
-
+df.to_csv('../../../megafires_data/output/data.csv')
 
