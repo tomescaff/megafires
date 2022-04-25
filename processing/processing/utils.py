@@ -178,3 +178,82 @@ def get_param_tau(param_fun, args):
         tau[i] = 1/tail[i]
 
     return u, tau
+
+# get linear trend from QN station data
+def get_linear_trend():
+
+    # get QN series
+    da = get_QN_series()
+    y = da.values
+    x = da.time.dt.year.values
+
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+
+    y_pred = slope*x + intercept
+
+    ans = dict()
+    ans['y'] = y
+    ans['x'] = x
+    ans['y_pred'] = y_pred
+    ans['b'] = slope
+    ans['a'] = intercept
+    ans['r'] = r_value
+    ans['p'] = p_value
+    ans['std_err'] = std_err
+
+    return ans
+
+# get return period function from QN station data detrended
+def get_QN_tau_detrended():
+
+    # get QN series
+    da = get_QN_series()
+
+    # get linear trend parameters from full series
+    dtrend = get_linear_trend()
+
+    # get predicted values from full series
+    qn_pred = xr.DataArray(dtrend['y_pred'], coords=[da.time], dims=['time'])
+
+    # get detrended series
+    qn_detrended = da - qn_pred + da.mean('time')
+
+    n = qn_detrended.size
+
+    # sort values
+    z = qn_detrended.values
+    z = np.sort(z)
+
+    # get unique values
+    u = np.unique(z)
+
+    m = u.size
+
+    # create matrix for tail probability and tau
+    tail = np.zeros((m,))
+    tau = np.zeros((m,))
+
+    # compute tail and tau
+    for i in range(m):
+        x = u[i]
+        tail[i] = np.sum(z>=x)/n
+        tau[i] = 1/tail[i]
+
+    return u, tau
+
+# get Quinta Normal time series of tmax january monthly mean detrended
+def get_QN_series_detrended():
+
+    # get QN series
+    da = get_QN_series()
+
+    # get linear trend parameters from full series
+    dtrend = get_linear_trend()
+
+    # get predicted values from full series
+    qn_pred = xr.DataArray(dtrend['y_pred'], coords=[da.time], dims=['time'])
+
+    # get detrended series
+    qn_detrended = da - qn_pred + da.mean('time')
+
+    return qn_detrended
