@@ -13,7 +13,7 @@ from scipy.stats import kstest
 import numpy as np
 
 # get Quinta Normal time series
-da = ut.get_QN_series_detrended()
+da = ut.get_QN_series_detrended_2017r()
 
 # fit normal dist
 normfit = norm.fit(da.values)
@@ -64,8 +64,8 @@ plt.xlim([26,34])
 # set title and labels
 plt.xlabel('January Tmax (ºC)')
 plt.ylabel('PDF')
-plt.title('January Tmax distribution at Quinta Normal (detrended)')
-plt.savefig('../../../megafires_data/png/QN_pdf_detrended.png', dpi=300)
+plt.title('January Tmax distribution at Quinta Normal (2017 removed & detrended)')
+plt.savefig('../../../megafires_data/png/QN_pdf_detrended_2017r.png', dpi=300)
 plt.show()
     
 

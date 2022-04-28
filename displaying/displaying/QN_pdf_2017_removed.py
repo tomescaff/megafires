@@ -67,7 +67,7 @@ plt.xlim([26,34])
 # set title and labels
 plt.xlabel('January Tmax (ºC)')
 plt.ylabel('PDF')
-plt.title('January Tmax distribution at Quinta Normal')
+plt.title('January Tmax distribution at Quinta Normal (2017 removed)')
 plt.savefig('../../../megafires_data/png/QN_pdf_2017_removed.png', dpi=300)
 plt.show()
     

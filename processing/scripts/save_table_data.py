@@ -51,7 +51,9 @@ df.loc['QN 2017 parametric tau (Norm)','Full series'] = qn_tau_parametric_norm.s
 df.loc['QN 2017 parametric tau (GEV)','Full series'] = qn_tau_parametric_gev.squeeze().round(2)
 df.loc['QN 2017 parametric tau (Gumbel)','Full series'] = qn_tau_parametric_gum.squeeze().round(2)
 
+#################################
 # compute taus with 2017 removed
+#################################
 
 # fit normal dist 2017 removed
 normfit = norm.fit(qn_2017r.values)
@@ -94,7 +96,7 @@ df.loc['QN 2017 value', 'Full series linear detrended'] = qn_detrended.sel(time=
 
 # get 2017 diff: full series - x
 df.loc['QN 2017 Full series diff', 'Full series'] = 0.0
-df.loc['QN 2017 Full series diff', 'Full series linear detrended'] = df.loc['QN 2017 value', 'Full series'] - df.loc['QN 2017 value', 'Full series linear detrended']
+df.loc['QN 2017 Full series diff', 'Full series linear detrended'] = (df.loc['QN 2017 value', 'Full series'] - df.loc['QN 2017 value', 'Full series linear detrended']).round(2)
 
 # get max values 
 df.loc['QN max value', 'Full series'] = qn.max().values.round(2)
@@ -131,6 +133,39 @@ qn_detrended_tau_parametric_gum = 1/gumbel_r.sf(qn.sel(time='2017'), *gumrfit)
 df.loc['QN 2017 parametric tau (Norm)','Full series linear detrended'] = qn_detrended_tau_parametric_norm.squeeze().round(2)
 df.loc['QN 2017 parametric tau (GEV)','Full series linear detrended'] = qn_detrended_tau_parametric_gev.squeeze().round(2)
 df.loc['QN 2017 parametric tau (Gumbel)','Full series linear detrended'] = qn_detrended_tau_parametric_gum.squeeze().round(2)
+
+############################################################
+# get linear trend parameters from series with 2017 removed
+############################################################
+dtrend_2017r = ut.get_linear_trend_2017r()
+
+# get predicted values from series with 2017 removed
+qn_pred_2017r = xr.DataArray(dtrend_2017r['y_pred'], coords=[qn_2017r.time], dims=['time'])
+
+# get detrended series from series with 2017 removed
+qn_detrended_2017r = qn_2017r - qn_pred_2017r + qn_2017r.mean('time')
+
+# fit normal dist
+normfit = norm.fit(qn_detrended_2017r.values)
+qn_detrended_2017r_tau_parametric_norm = 1/norm.sf(qn.sel(time='2017'), *normfit)
+
+# fit gev
+gevfit = genextreme.fit(qn_detrended_2017r.values)
+qn_detrended_2017r_tau_parametric_gev = 1/genextreme.sf(qn.sel(time='2017'), *gevfit)
+
+# fit gumbel_r
+gumrfit = gumbel_r.fit(qn_detrended_2017r.values)
+qn_detrended_2017r_tau_parametric_gum = 1/gumbel_r.sf(qn.sel(time='2017'), *gumrfit)
+
+df.loc['QN 2017 parametric tau (Norm)','2017 removed linear detrended'] = qn_detrended_2017r_tau_parametric_norm.squeeze().round(2)
+df.loc['QN 2017 parametric tau (GEV)','2017 removed linear detrended'] = qn_detrended_2017r_tau_parametric_gev.squeeze().round(2)
+df.loc['QN 2017 parametric tau (Gumbel)','2017 removed linear detrended'] = qn_detrended_2017r_tau_parametric_gum.squeeze().round(2)
+
+# get trend parameters
+df.loc['QN 2017 predict', '2017 removed linear model'] = (dtrend_2017r['b']*2017+dtrend_2017r['a']).round(2)
+df.loc['slope (ºC/year)', '2017 removed linear model'] = dtrend_2017r['b'].round(2)
+df.loc['intercept (year)', '2017 removed linear model'] = dtrend_2017r['a'].round(2)
+df.loc['R2', '2017 removed linear model'] = (dtrend_2017r['r']**2).round(2)
 
 df.to_csv('../../../megafires_data/output/data.csv')
 
