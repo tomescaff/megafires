@@ -145,6 +145,11 @@ qn_pred_2017r = xr.DataArray(dtrend_2017r['y_pred'], coords=[qn_2017r.time], dim
 # get detrended series from series with 2017 removed
 qn_detrended_2017r = qn_2017r - qn_pred_2017r + qn_2017r.mean('time')
 
+# compute clims detrended
+df.loc['QN Clim 1950-2021','2017 removed linear detrended'] = qn_detrended.mean('time').values.round(2)
+df.loc['QN Clim 1981-2010','2017 removed linear detrended'] = qn_detrended.sel(time=slice('1981','2010')).mean('time').values.round(2)
+
+
 # fit normal dist
 normfit = norm.fit(qn_detrended_2017r.values)
 qn_detrended_2017r_tau_parametric_norm = 1/norm.sf(qn.sel(time='2017'), *normfit)
