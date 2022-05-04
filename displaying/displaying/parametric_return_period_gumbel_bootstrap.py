@@ -12,32 +12,26 @@ from scipy.stats import gumbel_r
 from scipy.optimize import curve_fit
 from sklearn.utils import resample as bootstrap
 
-# get Quinta Normal time series
-da = ut.get_QN_series()
-
-x = np.linspace(27, 34, 1000)
-# fit normal dist
-normfit = norm.fit(da.values)
-y_norm = 1/norm.sf(x, *normfit)
-
 # get Quinta Normal return period
 u, tau = ut.get_QN_tau()
 
-f = lambda tau, mu, sig : norm.isf(1/tau, loc=mu, scale=sig)
+# get Quinta Normal time series
+da = ut.get_QN_series()
 
-popt, pcov = curve_fit(f,tau, u, p0=normfit , method='lm')
+x = np.arange(1.01, 11000, 0.01)
 
-
-tau_x = np.arange(1.01, 10000, 0.01)
+# fit normal dist
+gumfit = gumbel_r.fit(da.values)
+y = gumbel_r.isf(1/x, *gumfit)
 
 #confidence intervals
 nboot = 100
-bspreds = np.zeros((nboot, tau_x.size))
+bspreds = np.zeros((nboot, x.size))
 
 for i in range(nboot):
-    xb, yb = bootstrap(tau, u)
-    params, cov = curve_fit(f,xb,yb, p0=normfit , method='lm')
-    bspreds[i] = f(tau_x,*params)
+    z = bootstrap(da.values)
+    gumfit_ = gumbel_r.fit(z)
+    bspreds[i] = gumbel_r.isf(1/x, *gumfit_)
 
 yinf, ysup= np.quantile(bspreds, [0.025, 0.975], axis = 0)
 
@@ -45,14 +39,12 @@ yinf, ysup= np.quantile(bspreds, [0.025, 0.975], axis = 0)
 fig = plt.figure(figsize=(12,6))
 
 # plot the paramtric curves
-plt.plot(y_norm, x, color='k', lw=0.8, alpha = 1, label = 'Parametric return period (norm)')
+plt.gca().fill_between(x, ysup, yinf, alpha=.25, label='5-sigma interval')
 
-plt.gca().fill_between(tau_x, ysup, yinf, alpha=.25, label='5-sigma interval')
-# plt.plot(tau_x, bspreds.T, color = 'C0', alpha = 0.15)
 # plot the scatter
 plt.scatter(tau, u, marker='o', facecolor='lightskyblue', edgecolor='blue', color='blue', alpha = 1, label = 'Non parametric return period')
 
-plt.plot(tau_x, f(tau_x, *popt), color='r', lw=0.8, alpha = 1, label = 'Parametric return period (norm)')
+plt.plot(x,y, color='r', lw=0.8, alpha = 1, label = 'Parametric return period (norm)')
 
 # plot the 1981-2010 clim
 plt.axhline(da.sel(time=slice('1981-01-01','2010-12-31')).mean(), lw=1, color='grey', ls='--', label='1981-2010 mean value')
