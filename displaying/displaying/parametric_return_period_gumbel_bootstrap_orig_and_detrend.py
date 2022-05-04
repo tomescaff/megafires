@@ -70,15 +70,15 @@ yinf_det, ysup_det = np.quantile(bspreds, [0.025, 0.975], axis = 0)
 fig = plt.figure(figsize=(12,6))
 
 # plot the paramtric curves
-plt.gca().fill_between(x, ysup, yinf, alpha=.25, label='5-sigma interval')
-plt.gca().fill_between(x, ysup_det, yinf_det, alpha=.25, label='5-sigma interval')
+plt.gca().fill_between(x, ysup, yinf, alpha=.25, label='95% confidence interval')
+plt.gca().fill_between(x, ysup_det, yinf_det, alpha=.25, label='95% confidence interval COUNTERFACTUAL')
 
 # plot the scatter
 plt.scatter(tau, u, marker='o', facecolor='lightskyblue', edgecolor='blue', color='blue', alpha = 1, label = 'Non parametric return period')
 plt.scatter(tau_det, u_det, marker='o', facecolor='navajowhite', edgecolor='orange', color='orange', alpha = 1, label = 'Non parametric return period COUNTERFACTUAL')
 
-plt.plot(x,y, color='r', lw=0.8, alpha = 1, label = 'Parametric return period (norm)')
-plt.plot(x,y_det, color='r', lw=0.8, ls='--', alpha = 1, label = 'Parametric return period (norm)')
+plt.plot(x,y, color='b', lw=0.8, alpha = 1, label = 'Parametric return period (norm)')
+plt.plot(x,y_det, color='r', lw=0.8, alpha = 1, label = 'Parametric return period (norm) COUNTERFACTUAL')
 
 # plot the 1981-2010 clim
 plt.axhline(da.sel(time=slice('1981-01-01','2010-12-31')).mean(), lw=1, color='grey', ls='--', label='1981-2010 mean value')
@@ -104,7 +104,7 @@ plt.ylim([27, 34])
 plt.xlabel('Return period (years)')
 plt.ylabel('January Tmax (ºC)')
 plt.title('January Tmax return period at Quinta Normal')
-# plt.savefig('../../../megafires_data/png/QN_parametric_return_period.png', dpi=300)
+plt.savefig('../../../megafires_data/png/QN_parametric_return_period_gumbel_bootstrap_orig_and_detrend.png', dpi=300)
 plt.show()
     
 

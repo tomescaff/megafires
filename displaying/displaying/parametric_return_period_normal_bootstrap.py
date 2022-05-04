@@ -39,7 +39,7 @@ yinf, ysup= np.quantile(bspreds, [0.025, 0.975], axis = 0)
 fig = plt.figure(figsize=(12,6))
 
 # plot the paramtric curves
-plt.gca().fill_between(x, ysup, yinf, alpha=.25, label='5-sigma interval')
+plt.gca().fill_between(x, ysup, yinf, alpha=.25, label='95% confidence interval')
 
 # plot the scatter
 plt.scatter(tau, u, marker='o', facecolor='lightskyblue', edgecolor='blue', color='blue', alpha = 1, label = 'Non parametric return period')
@@ -70,7 +70,7 @@ plt.ylim([27, 34])
 plt.xlabel('Return period (years)')
 plt.ylabel('January Tmax (ºC)')
 plt.title('January Tmax return period at Quinta Normal')
-# plt.savefig('../../../megafires_data/png/QN_parametric_return_period.png', dpi=300)
+plt.savefig('../../../megafires_data/png/QN_parametric_return_period_normal_bootstrap.png', dpi=300)
 plt.show()
     
 
