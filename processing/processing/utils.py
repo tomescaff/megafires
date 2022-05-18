@@ -331,3 +331,57 @@ def get_QN_tau_detrended_2017r():
         tau[i] = 1/tail[i]
 
     return u, tau
+
+# get LENS jan Tmax time series
+def get_LENS_jan():
+    # get LENS time series
+    basedir = '../../../megafires_data/LENS/'
+    filename = 'LENS_tmax_mon_QN.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV']-273.15
+    da_jan = da[:, ::12]
+    return da_jan
+    
+# get LENS jan Tmax time series 40 runs as one numpy array between 1950-2021
+def get_LENS_jan_1950_2021_ravel():
+    da_jan = get_LENS_jan()
+    da_jan_1950_2021 = da_jan.sel(time=slice('1950', '2021'))
+    np_jan_all_runs_1950_2021 = np.ravel(da_jan_1950_2021.values)
+    return np_jan_all_runs_1950_2021
+
+# get control run jan tmax as numpy array
+def get_control_run_jan():
+    basedir = '../../../megafires_data/LENS/'
+    filename = 'LENS_tmax_mon_QN_control_run.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV']-273.15
+    da_jan = da[::12]
+    np_jan_control_run = np.ravel(da_jan.values)
+    return np_jan_control_run
+
+# get return periods from arg as numpy array
+def get_LENS_jan_1950_2021_tau(z):
+    
+    n = z.size
+
+    # sort values
+    z = np.sort(z)
+
+    # get unique values
+    u = np.unique(z)
+
+    m = u.size
+
+    # create matrix for tail probability and tau
+    tail = np.zeros((m,))
+    tau = np.zeros((m,))
+
+    # compute tail and tau
+    for i in range(m):
+        x = u[i]
+        tail[i] = np.sum(z>=x)/n
+        tau[i] = 1/tail[i]
+
+    return u, tau
