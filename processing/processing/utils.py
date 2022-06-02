@@ -19,6 +19,30 @@ def get_QN_series():
 
     return da
 
+# get Quinta Normal time series of tmax january monthly mean from 1911 to 2013
+def get_QN_past_series():
+
+    # define path of csv file with data
+    filepath = '../../../megafires_data/QN/T_maxima_diaria_QN_1911_2013.csv'
+
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, decimal=",")
+
+    # select january tmax
+    df_jan = df.iloc[0:31,:]
+
+    # create xarray with mean values rounded
+    years = np.arange(1911,2014)
+    data = np.zeros((years.size,))
+
+    for i, year in enumerate(years):
+        data[i] = round(df_jan.loc[:,f'{year}'].mean(), 1)
+
+    time = pd.date_range('1911-01-01', '2013-01-01',freq='1YS')
+
+    da = xr.DataArray(data, coords=[time], dims=['time'])
+    return da
+
 # get CR2MET tmax over Chilean territory from 1979 to 2018 from file
 def get_CR2MET():
 
