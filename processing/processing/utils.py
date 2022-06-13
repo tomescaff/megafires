@@ -43,6 +43,49 @@ def get_QN_past_series():
     da = xr.DataArray(data, coords=[time], dims=['time'])
     return da
 
+# get Quinta Normal time series of tmax january monthly mean from 1911 to 2021
+def get_QN_full_series():
+
+    cr2 = get_QN_series()
+    paceituno = get_QN_past_series()
+    paceituno_slice = paceituno.sel(time=slice('1911', '1949'))
+
+    full = xr.concat([paceituno_slice, cr2], dim='time')
+    return full
+
+# get Curico time series of tmax january monthly mean
+def get_CU_series():
+    
+    # define path of csv file with data
+    filepath = '../../../megafires_data/series/tmax_january_mon_mean_CUDMC.csv'
+
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, delimiter=",", decimal=".", parse_dates={'time': ['agno', ' mes', ' dia']})
+    df = df.rename({' valor':'tmax'}, axis='columns')
+    df = df.set_index('time')
+
+    # to xarray data array
+    da = df['tmax'].to_xarray()
+
+    return da
+
+# get Chillan time series of tmax january monthly mean
+def get_CH_series():
+    
+    # define path of csv file with data
+    filepath = '../../../megafires_data/series/tmax_january_mon_mean_CHDMC.csv'
+
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, delimiter=",", decimal=".", parse_dates={'time': ['agno', ' mes', ' dia']})
+    df = df.rename({' valor':'tmax'}, axis='columns')
+    df = df.set_index('time')
+
+    # to xarray data array
+    da = df['tmax'].to_xarray()
+
+    return da
+
+
 # get CR2MET tmax over Chilean territory from 1979 to 2018 from file
 def get_CR2MET():
 
@@ -409,3 +452,4 @@ def get_LENS_jan_1950_2021_tau(z):
         tau[i] = 1/tail[i]
 
     return u, tau
+
