@@ -17,7 +17,7 @@ sys.path.append('../../processing')
 import processing.utils as ut
 
 # get LENS trend 1950-2020 jan tmax
-ds = xr.open_dataset('../../../megafires_data/LENS_ALL/LENS_tmax_mean_mon_1950_2020_jan_trend.nc')
+ds = xr.open_dataset('../../../megafires_data/LENS2_ALL/LENS2_tmax_mean_mon_1950_2020_jan_trend.nc')
 da = ds['slope'].mean('run')*10
 
 # lat lon point of interests
@@ -92,6 +92,6 @@ for tick in ax.yaxis.get_major_ticks():
 
 # set title
 cbar.ax.get_yaxis().labelpad = 12
-cbar.ax.set_ylabel('LENS trend (ensmean) january Tmax 1950-2020 (ºC/dec)', fontdict={'fontsize':10})
-plt.savefig('../../../megafires_data/png/LENS_trend_ensmean_jan_tmax_1950_2020_with_nearest_gridpoints_scale_sym.png', dpi=300)
+cbar.ax.set_ylabel('LENS2 trend (ensmean) january Tmax 1950-2020 (ºC/dec)', fontdict={'fontsize':10})
+plt.savefig('../../../megafires_data/png/LENS2_trend_ensmean_jan_tmax_1950_2020_with_nearest_gridpoints_scale_sym.png', dpi=300)
 plt.show()
