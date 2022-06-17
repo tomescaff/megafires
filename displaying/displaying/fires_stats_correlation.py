@@ -21,12 +21,18 @@ qn_janfeb = stns.get_QN_tmax_janfeb()
 
 ####
 
-series = qn_janfeb
+series = qn_jan.where(qn_jan.time.dt.year != 2017, drop=True)
 
 ff_seas = fires.get_fires_frequency_by_season()
 ba_seas = fires.get_burned_area_by_season()
 ba_jan = fires.get_burned_area_january()
 ba_feb = fires.get_burned_area_february()
+
+ff_seas = ff_seas.where(ff_seas.time.dt.year != 2017, drop=True)
+ba_seas = ba_seas.where(ba_seas.time.dt.year != 2017, drop=True)
+ba_jan = ba_jan.where(ba_jan.time.dt.year != 2017, drop=True)
+ba_feb = ba_feb.where(ba_feb.time.dt.year != 2017, drop=True)
+
 
 ###
 
@@ -50,12 +56,12 @@ ba_seas_1995_2021 = ba_seas.sel(time=slice('1995', '2021'))
 ba_jan_1995_2021 = ba_jan.sel(time=slice('1995', '2021'))
 ba_feb_1995_2021 = ba_feb.sel(time=slice('1995', '2021'))
 
-#print('1a',pearsonr(series_1964_2021,ff_seas_1964_2021))
+print('1a',pearsonr(series_1964_2021,ff_seas_1964_2021))
 print('1b',pearsonr(series_1966_2021,ff_seas_1966_2021))
 print('1c',pearsonr(series_1985_2021,ff_seas_1985_2021))
 print('1d',pearsonr(series_1995_2021,ff_seas_1995_2021))
 
-#print('2a',pearsonr(series_1964_2021,ba_seas_1964_2021))
+print('2a',pearsonr(series_1964_2021,ba_seas_1964_2021))
 print('2b',pearsonr(series_1966_2021,ba_seas_1966_2021))
 print('2c',pearsonr(series_1985_2021,ba_seas_1985_2021))
 print('2d',pearsonr(series_1995_2021,ba_seas_1995_2021))
