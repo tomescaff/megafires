@@ -117,9 +117,110 @@ def get_regindex_tmax_jan(norm=False, anom=True):
     
     return ans
 
+# get QN time series of tmax february monthly mean
+def get_QN_tmax_feb():
+    
+    # define path of csv file with data
+    filepath = '../../../megafires_data/series/tmax_february_mon_mean_QN.csv'
 
-        
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, delimiter=",", decimal=".", parse_dates={'time': ['agno', ' mes', ' dia']})
+    df = df.rename({' valor':'tmax'}, axis='columns')
+    df = df.set_index('time')
 
+    # to xarray data array
+    da = df['tmax'].to_xarray()
+
+    return da
+
+# get curico time series of tmax february monthly mean
+def get_CU_tmax_feb():
+    
+    # define path of csv file with data
+    filepath = '../../../megafires_data/series/tmax_february_mon_mean_CUDMC.csv'
+
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, delimiter=",", decimal=".", parse_dates={'time': ['agno', ' mes', ' dia']})
+    df = df.rename({' valor':'tmax'}, axis='columns')
+    df = df.set_index('time')
+
+    # to xarray data array
+    da = df['tmax'].to_xarray()
+
+    return da
+
+# get chillan time series of tmax february monthly mean
+def get_CH_tmax_feb():
+    
+    # define path of csv file with data
+    filepath = '../../../megafires_data/series/tmax_february_mon_mean_CHDMC.csv'
+
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, delimiter=",", decimal=".", parse_dates={'time': ['agno', ' mes', ' dia']})
+    df = df.rename({' valor':'tmax'}, axis='columns')
+    df = df.set_index('time')
+
+    # to xarray data array
+    da = df['tmax'].to_xarray()
+
+    return da
+
+def get_regindex_tmax_feb(norm=False, anom=True):
+    
+    qn = get_QN_tmax_feb().sel(time=slice('1966', '2021'))
+    cu = get_CU_tmax_feb().sel(time=slice('1966', '2021'))
+    ch = get_CH_tmax_feb().sel(time=slice('1966', '2021'))
+
+    qn_1981_2010_mean = qn.sel(time=slice('1981', '2010')).mean('time')
+    cu_1981_2010_mean = cu.sel(time=slice('1981', '2010')).mean('time')
+    ch_1981_2010_mean = ch.sel(time=slice('1981', '2010')).mean('time')
+
+    qn_1981_2010_std = qn.sel(time=slice('1981', '2010')).std('time')
+    cu_1981_2010_std = cu.sel(time=slice('1981', '2010')).std('time')
+    ch_1981_2010_std = ch.sel(time=slice('1981', '2010')).std('time')
+
+    qn_anom = qn - qn_1981_2010_mean
+    cu_anom = cu - cu_1981_2010_mean
+    ch_anom = ch - ch_1981_2010_mean
+
+    regindex_anom = (qn_anom+cu_anom+ch_anom)/3.0
+    regindex_mean = (qn_1981_2010_mean + cu_1981_2010_mean + ch_1981_2010_mean)/3.0
+
+    regindex_norm = (qn_anom/qn_1981_2010_std + cu_anom/cu_1981_2010_std + ch_anom/ch_1981_2010_std)/3.0
+
+    if not norm:
+        if anom:
+            ans = regindex_anom
+        else:
+            ans = regindex_anom + regindex_mean
+    else:
+        ans = regindex_norm
+    
+    return ans
+
+def get_QN_tmax_janfeb():
+    series_jan = get_QN_tmax_jan().sel(time=slice('1966','2021'))
+    series_feb = get_QN_tmax_feb().sel(time=slice('1966','2021'))
+    data = (series_jan.values*31 + series_feb.values*28)/(31+28)
+    time = series_jan.time
+    da = xr.DataArray(data, coords=[time], dims=['time'])
+    return da
+
+def get_CU_tmax_janfeb():
+    series_jan = get_QN_tmax_jan().sel(time=slice('1966','2021'))
+    series_feb = get_QN_tmax_feb().sel(time=slice('1966','2021'))
+    data = (series_jan.values*31 + series_feb.values*28)/(31+28)
+    time = series_jan.time
+    da = xr.DataArray(data, coords=[time], dims=['time'])
+    return da
+
+def get_CH_tmax_janfeb():
+    series_jan = get_QN_tmax_jan().sel(time=slice('1966','2021'))
+    series_feb = get_QN_tmax_feb().sel(time=slice('1966','2021'))
+    data = (series_jan.values*31 + series_feb.values*28)/(31+28)
+    time = series_jan.time
+    da = xr.DataArray(data, coords=[time], dims=['time'])
+    return da
     
 
 

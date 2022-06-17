@@ -107,19 +107,18 @@ def get_CR2MET_jan():
 
     return da[::12, :,:]
 
-# get CR2MET corr jan with QN jan tmax
-def get_corr_CR2MET_QN_jan_tmax():
+# get CR2MET corr jan with time series jan tmax
+def get_corr_CR2MET_jan_tmax(series):
 
-    # get QN time series
-    qn = get_QN_series()
-    qn = qn.sel(time=slice('1979-01', '2018-12'))
+    # slice time series
+    series = series.sel(time=slice('1979-01', '2018-12'))
 
     # get CR2MET jan tmax
     cr2 = get_CR2MET_jan()
 
     # to numpy array
     x = cr2.values
-    y = qn.values
+    y = series.values
 
     t, n, m = x.shape
 
@@ -142,6 +141,12 @@ def get_corr_CR2MET_QN_jan_tmax():
     
     return da
 
+# get CR2MET corr jan with QN jan tmax
+def get_corr_CR2MET_QN_jan_tmax():
+
+    qn = get_QN_series()
+    return get_corr_CR2MET_jan_tmax(qn)
+    
 # get CR2MET 2017 anomalies (clim. 1981-2010)
 def get_CR2MET_2017_anom():
 
