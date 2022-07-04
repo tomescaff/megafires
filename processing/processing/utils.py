@@ -164,6 +164,47 @@ def get_CR2MET_2017_anom():
 
     return anom
 
+def get_CR2MET_2017_anom_std():
+    
+    # get CR2MET jan tmax
+    cr2 = get_CR2MET_jan()
+
+    # compute clim
+    clim = cr2.sel(time=slice('1981-01-01', '2010-12-31')).mean('time').squeeze()
+
+    # compute std
+    std = cr2.sel(time=slice('1981-01-01', '2010-12-31')).std('time').squeeze()
+    
+    # get 2017 value
+    value = cr2.sel(time=slice('2017-01-01', '2017-12-31')).squeeze()
+
+    # compute anom
+    anom = (value - clim)/std
+
+    return anom
+
+def get_CR2MET_2017_ranking():
+    
+    # get CR2MET jan tmax
+    cr2 = get_CR2MET_jan()
+
+    ntime, nlat, nlon = cr2.values.shape
+    matrix = np.zeros((nlat,nlon))
+
+    for ilat in range(nlat):
+        for ilon in range(nlon):
+            series = cr2[:, ilat, ilon].values
+            if np.isnan(series[0]):
+                matrix[ilat, ilon] = np.nan
+            else:
+                ranks = stats.rankdata(series)
+                matrix[ilat, ilon] = ranks[-2]
+    
+    # to xarray DataArray
+    da = xr.DataArray(data = matrix, coords = [cr2.lat, cr2.lon], dims = ['lat', 'lon'])
+    
+    return da
+
 # get return period function from QN station data
 def get_QN_tau():
 
