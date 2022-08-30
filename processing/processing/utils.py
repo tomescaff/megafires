@@ -499,3 +499,27 @@ def get_LENS_jan_1950_2021_tau(z):
 
     return u, tau
 
+def get_tau(z):
+    
+    n = z.size
+
+    # sort values
+    z = np.sort(z)
+
+    # get unique values
+    u = np.unique(z)
+
+    m = u.size
+
+    # create matrix for tail probability and tau
+    tail = np.zeros((m,))
+    tau = np.zeros((m,))
+
+    # compute tail and tau
+    for i in range(m):
+        x = u[i]
+        tail[i] = np.sum(z>=x)/n
+        tau[i] = 1/tail[i]
+
+    return u, tau
+
