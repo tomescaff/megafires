@@ -16,9 +16,12 @@ sys.path.append('../../processing')
 import processing.utils as ut
 import  xarray as xr
 
-# get LENS2 january tmax series
-ds = xr.open_dataset('../../../megafires_data/LENS2_ALL/LENS2_tmax_mean_mon_jan_1979_2018_mean.nc')
+# get LENS january tmax series
+ds = xr.open_dataset('../../../megafires_data/LENS_ALL/LENS_tmax_mean_mon_chile.nc')
 da = ds['TREFMXAV']
+da = da.where(da.time.dt.month==1, drop=True)
+da = da.sel(time=slice('1979', '2018')).mean('time').mean('run')
+
 fname = '../../../megafires_data/shp/Regiones/Regional.shp'
 
 # create figure
@@ -81,5 +84,5 @@ for tick in ax.yaxis.get_major_ticks():
 circle = plt.Circle((-70.6828, -33.4450), 0.2, color='k', fill=False, zorder=4, lw=0.5)
 ax.add_patch(circle)
 
-plt.savefig('../../../megafires_data/png/LENS2_tasmax_jan_1979_2018_clim.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/LENS_tasmax_jan_1979_2018_clim.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()

@@ -16,9 +16,12 @@ sys.path.append('../../processing')
 import processing.utils as ut
 import  xarray as xr
 
-# get LENS2 january tmax series
-ds = xr.open_dataset('../../../megafires_data/LENS2_ALL/LENS2_tmax_mean_mon_jan_1979_2018_mean.nc')
+# get LENS january tmax series
+ds = xr.open_dataset('../../../megafires_data/LENS_ALL/LENS_tmax_mean_mon_chile.nc')
 da = ds['TREFMXAV']
+da = da.where(da.time.dt.month==1, drop=True)
+da = da.sel(time=slice('1979', '2018')).std('time').mean('run')
+
 fname = '../../../megafires_data/shp/Regiones/Regional.shp'
 
 # create figure
@@ -56,7 +59,7 @@ gl.xlocator = mticker.FixedLocator(xticks)
 gl.ylocator = mticker.FixedLocator(yticks)
 
 # plot the climatology and reshape color bar cmaps.amwg_blueyellowred
-pcm = ax.pcolormesh(da.lon.values, da.lat.values, da.values, cmap=cmaps.amwg_blueyellowred, zorder=4, vmin=10, vmax=30, edgecolor='k', lw=0.1)
+pcm = ax.pcolormesh(da.lon.values, da.lat.values, da.values, cmap='jet', zorder=4, vmin=0.0, vmax=2.0, edgecolor='k', lw=0.1)
 cbar = plt.colorbar(pcm, aspect = 40, pad=0.03)
 
 # draw the coastlines
@@ -81,5 +84,5 @@ for tick in ax.yaxis.get_major_ticks():
 circle = plt.Circle((-70.6828, -33.4450), 0.2, color='k', fill=False, zorder=4, lw=0.5)
 ax.add_patch(circle)
 
-plt.savefig('../../../megafires_data/png/LENS2_tasmax_jan_1979_2018_clim.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/LENS_tasmax_jan_1979_2018_std.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
