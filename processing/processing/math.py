@@ -68,3 +68,16 @@ def mle_gumbel_2d(xarr, Tarr, init_params):
     xopt = fmin(func=maxlkh, x0 = init_params, args=(xarr, Tarr))
     return xopt
 
+# maximum likelihood estimation -- norm
+def mle_norm_2d_fast(xarr, Tarr, init_params):
+
+    def norm_with_trend_shift(x, T, mu0, sigma0, alpha):
+        return norm.pdf(x, mu0 + alpha*T, sigma0)
+
+    vfun = np.vectorize(norm_with_trend_shift) 
+
+    def maxlkh(params, *args):
+        return -np.sum(np.log(vfun(*args, *params)))
+
+    return fmin(func=maxlkh, x0 = init_params, args=(xarr, Tarr))
+    
