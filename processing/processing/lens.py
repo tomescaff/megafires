@@ -22,6 +22,14 @@ def get_LENS_jan_tmax_QNWE():
     qne = get_LENS_jan_tmax_QNE().drop(['lat','lon'])
     return (qnw + qne)/2.0
 
+def get_LENS_jan_tmax_QNWE_control_run():
+    basedir = '../../../megafires_data/LENS/'
+    filename = 'LENS_tasmax_mon_mean_QN_control_run.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV']
+    return da
+
 def get_LENS2_jan_tmax_QNW():
     basedir = '../../../megafires_data/LENS2/'
     filename = 'LENS2_tmax_mean_mon_QNW.nc'
