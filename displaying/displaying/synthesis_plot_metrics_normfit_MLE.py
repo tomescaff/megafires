@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from os.path import join
 
 relpath = '../../../megafires_data/output/'
-obs_mle_1880 = pd.read_csv(join(relpath, 'metrics_of_attr_QN_MLE_1880_2017_normal_fit_1930_2021.csv'), index_col=0)
-lens1_mle_cr = pd.read_csv(join(relpath, 'metrics_of_attr_LENS_MLE_CR_2017_normal_fit_1930_2021_by_return_period.csv'), index_col=0)
-lens2_mle_1880 = pd.read_csv(join(relpath, 'metrics_of_attr_LENS2_MLE_1880_2017_normal_fit_1930_2021.csv'), index_col=0)
+obs_mle_1880 = pd.read_csv(join(relpath, 'metrics_QN_MLE_1880_2017_normfit_1930_2021.csv'), index_col=0)
+lens1_mle_cr = pd.read_csv(join(relpath, 'metrics_LENS1_MLE_crun_2017_normfit_1930_2021_by_return_period.csv'), index_col=0)
+lens2_mle_1880 = pd.read_csv(join(relpath, 'metrics_LENS2_MLE_1880_2017_normfit_1850_2021_by_return_period.csv'), index_col=0)
 
 models = [ 
             obs_mle_1880,
