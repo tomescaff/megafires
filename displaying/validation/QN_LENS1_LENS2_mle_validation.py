@@ -9,10 +9,10 @@ relpath = '../../../megafires_data/output/'
 filename = 'MLE_tasmax_jan_QN_GMST_1000_normal_validation.nc'
 qn = xr.open_dataset(join(relpath, filename))
 
-filename = 'MLE_tasmax_jan_LENS1_GMST_100_normal_validation.nc'
+filename = 'MLE_tasmax_jan_LENS1_GMST_1000_normal_validation.nc'
 lens1 = xr.open_dataset(join(relpath, filename))
 
-filename = 'MLE_tasmax_jan_LENS2_GMST_100_normal_validation.nc'
+filename = 'MLE_tasmax_jan_LENS2_GMST_1000_normal_validation.nc'
 lens2 = xr.open_dataset(join(relpath, filename))
 
 model_names = ['observations', 'lens1', 'lens2']

@@ -62,7 +62,7 @@ df.loc['far c-a', 'raw'] = far_ca
 df.loc['delta c-a', 'raw'] = delta
 
 # bootstrap MLE
-nboot = 10
+nboot = 1000
 filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS2_GMST_'+str(nboot)+'_normal_evaluation.nc'
 bspreds = xr.open_dataset(filepath)
 bspreds_mu0 = bspreds.mu0.values
