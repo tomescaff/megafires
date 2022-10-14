@@ -39,5 +39,5 @@ ds = xr.Dataset({
     'sigma0': xr.DataArray(bspreds_sigma0, coords=[iter], dims=['iter']),
     'alpha':  xr.DataArray(bspreds_alpha,  coords=[iter], dims=['iter']), 
 })
-filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS2_GMST_'+str(nboot)+'_normal_evaluation.nc'
+filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS2_GMST_'+str(nboot)+'_normal_evaluation_QN_NN.nc'
 ds.to_netcdf(filepath)
