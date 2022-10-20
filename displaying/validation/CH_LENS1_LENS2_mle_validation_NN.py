@@ -6,13 +6,13 @@ from os.path import join
 
 relpath = '../../../megafires_data/output/'
 
-filename = 'MLE_tasmax_jan_QN_GMST_1000_normal_validation.nc'
+filename = 'MLE_tasmax_jan_CH_GMST_1000_normal_validation.nc'
 qn = xr.open_dataset(join(relpath, filename))
 
-filename = 'MLE_tasmax_jan_LENS1_GMST_100_normal_validation_QN_NN.nc'
+filename = 'MLE_tasmax_jan_LENS1_GMST_100_normal_validation_CH_NN.nc'
 lens1 = xr.open_dataset(join(relpath, filename))
 
-filename = 'MLE_tasmax_jan_LENS2_GMST_100_normal_validation_QN_NN.nc'
+filename = 'MLE_tasmax_jan_LENS2_GMST_100_normal_validation_CH_NN.nc'
 lens2 = xr.open_dataset(join(relpath, filename))
 
 model_names = ['observations', 'lens1', 'lens2']
@@ -92,7 +92,7 @@ ax.spines.left.set_visible(False)
 ax.spines.top.set_visible(False)
 
 plt.tight_layout()
-plt.savefig('../../../megafires_data/png/QN_LENS1_LENS2_mle_validation_NN.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/CH_LENS1_LENS2_mle_validation_NN.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
 
 

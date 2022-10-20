@@ -52,7 +52,8 @@ def get_QN_tmax_jan():
     full = xr.concat([paceituno_slice, cr2], dim='time')
     return full
 
-# get Curico time series of tmax january monthly mean
+# get General Freire Curico Ad. time series of tmax january monthly mean
+# lat, lon = -34.9664, -71.2167 
 def get_CU_tmax_jan():
     
     # define path of csv file with data
@@ -68,7 +69,8 @@ def get_CU_tmax_jan():
 
     return da
 
-# get Chillan time series of tmax january monthly mean
+# get Bernardo O'Higgins Chillan Ad. time series of tmax january monthly mean
+# lat, lon = -36.5872, -72.0400 
 def get_CH_tmax_jan():
     
     # define path of csv file with data

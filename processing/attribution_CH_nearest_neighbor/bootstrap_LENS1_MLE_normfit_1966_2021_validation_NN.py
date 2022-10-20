@@ -1,0 +1,48 @@
+import sys
+import numpy as np
+import xarray as xr
+import matplotlib.pyplot as plt
+from sklearn.utils import resample as bootstrap
+
+sys.path.append('../../processing')
+
+import processing.gmst as gmst
+import processing.lens as lens
+import processing.math as pmath
+import processing.stations as stns
+
+lens1_gmst_full = gmst.get_gmst_annual_lens1_ensmean()
+lens1_tmax_full = lens.get_LENS_jan_tmax_CH_NN()
+qn_full = stns.get_CH_tmax_jan()
+
+qn = qn_full.sel(time=slice('1966', '2021'))
+lens1_gmst = lens1_gmst_full.sel(time=slice('1966', '2021'))
+lens1_tmax = lens1_tmax_full.sel(time=slice('1966', '2021'))
+
+lens1_tmax_anom = lens1_tmax - lens1_tmax.mean('time')
+lens1_tmax_corrected = lens1_tmax_anom + qn.mean('time')
+
+lens1_gmst_arr = np.tile(lens1_gmst.values, lens1_tmax_corrected.shape[0])
+lens1_tmax_arr = np.ravel(lens1_tmax_corrected.values)
+
+# # bootstrap
+nboot = 100#10000
+bspreds_mu0 = np.zeros((nboot,))
+bspreds_sigma0 = np.zeros((nboot,))
+bspreds_alpha = np.zeros((nboot,))
+
+for i in range(nboot):
+    qn_i, sm_i = bootstrap(lens1_tmax_arr, lens1_gmst_arr)
+    xopt_i = pmath.mle_norm_2d_fast(qn_i, sm_i, [29.55, 1.03, 1.11])
+    bspreds_mu0[i] = xopt_i[0]
+    bspreds_sigma0[i] = xopt_i[1]
+    bspreds_alpha[i] = xopt_i[2]
+
+iter = np.arange(nboot)
+ds = xr.Dataset({
+    'mu0':    xr.DataArray(bspreds_mu0,    coords=[iter], dims=['iter']),
+    'sigma0': xr.DataArray(bspreds_sigma0, coords=[iter], dims=['iter']),
+    'alpha':  xr.DataArray(bspreds_alpha,  coords=[iter], dims=['iter']), 
+})
+filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS1_GMST_'+str(nboot)+'_normal_validation_CH_NN.nc'
+ds.to_netcdf(filepath)

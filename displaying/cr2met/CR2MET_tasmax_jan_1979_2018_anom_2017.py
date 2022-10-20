@@ -76,12 +76,15 @@ for tick in ax.xaxis.get_major_ticks():
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(8) 
 
-circle = plt.Circle((-70.6828, -33.4450), 0.2, color='k', fill=False, zorder=4, lw=0.5)
-ax.add_patch(circle)
+circle_qn = plt.Circle((-70.6828, -33.4450), 0.2, color='k', fill=False, zorder=4, lw=0.5)
+circle_cu = plt.Circle((-71.2167, -34.9664), 0.2, color='k', fill=False, zorder=4, lw=0.5)
+circle_ch = plt.Circle((-72.0400, -36.5872), 0.2, color='k', fill=False, zorder=4, lw=0.5)
+circle_cc = plt.Circle((-73.0622, -36.7792), 0.2, color='k', fill=False, zorder=4, lw=0.5)
 
-# set title
-# cbar.ax.get_yaxis().labelpad = 12
-# cbar.ax.set_ylabel('January 2017 Tmax Anomaly (ºC) ', fontdict={'fontsize':10})
+ax.add_patch(circle_qn)
+ax.add_patch(circle_cu)
+ax.add_patch(circle_ch)
+ax.add_patch(circle_cc)
 
 plt.savefig('../../../megafires_data/png/CR2MET_jan_2017_tmax_anom_full.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
