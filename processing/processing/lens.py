@@ -68,6 +68,30 @@ def get_LENS_jan_tmax_QNWE_control_run():
     da = ds['TREFMXAV']
     return da
 
+def get_LENS_jan_tmax_CU_control_run():
+    # nearerst neighbor
+    basedir = '../../../megafires_data/LENS_ALL/'
+    filename = 'LENS_tasmax_mon_mean_control_run_chile.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV'] - 273.15
+    lat, lon = -34.9664, -71.2167
+    da = da.sel(lat=lat, lon=lon%360, method = 'nearest')
+    da = da.where(da.time.dt.month == 1, drop=True)
+    return da
+
+def get_LENS_jan_tmax_CH_control_run():
+    # nearerst neighbor
+    basedir = '../../../megafires_data/LENS_ALL/'
+    filename = 'LENS_tasmax_mon_mean_control_run_chile.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV'] - 273.15
+    lat, lon = -36.5872, -72.0400
+    da = da.sel(lat=lat, lon=lon%360, method = 'nearest')
+    da = da.where(da.time.dt.month == 1, drop=True)
+    return da
+
 def get_LENS2_jan_tmax_QNW():
     # nearest neighbor
     basedir = '../../../megafires_data/LENS2/'

@@ -5,13 +5,13 @@ from os.path import join
 
 relpath = '../../../megafires_data/output/'
 obs_mle_1880 = pd.read_csv(join(relpath, 'metrics_CU_MLE_1880_2017_normfit_1960_2021.csv'), index_col=0)
-#lens1_mle_cr = pd.read_csv(join(relpath, 'metrics_LENS1_MLE_crun_2017_normfit_1920_2021_by_return_period_QN_NN.csv'), index_col=0)
-#lens2_mle_1880 = pd.read_csv(join(relpath, 'metrics_LENS2_MLE_1880_2017_normfit_1850_2021_by_return_period_QN_NN.csv'), index_col=0)
+lens1_mle_cr = pd.read_csv(join(relpath, 'metrics_LENS1_MLE_crun_2017_normfit_1920_2021_by_return_period_CU_NN.csv'), index_col=0)
+lens2_mle_1880 = pd.read_csv(join(relpath, 'metrics_LENS2_MLE_1880_2017_normfit_1850_2021_by_return_period_CU_NN.csv'), index_col=0)
 
 models = [ 
-            obs_mle_1880, obs_mle_1880, obs_mle_1880,
-            #lens1_mle_cr,
-            #lens2_mle_1880, 
+            obs_mle_1880, 
+            lens1_mle_cr,
+            lens2_mle_1880, 
          ]
 model_names = [
             'OBS',

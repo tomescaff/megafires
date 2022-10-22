@@ -20,26 +20,26 @@ fu_year = '2070'
 
 # raw values
 
-lens2_gmst_full = gmst.get_gmst_annual_lens2_ensmean()
-lens2_tmax_full = lens.get_LENS2_jan_tmax_QNW()
+lens1_gmst_full = gmst.get_gmst_annual_lens1_ensmean()
+lens1_tmax_full = lens.get_LENS_jan_tmax_CU_NN()
 
-lens2_gmst = lens2_gmst_full.sel(time=slice('2010', '2100'))
-lens2_tmax = lens2_tmax_full.sel(time=slice('2010', '2100'))
+lens1_gmst = lens1_gmst_full.sel(time=slice('2010', '2100'))
+lens1_tmax = lens1_tmax_full.sel(time=slice('2010', '2100'))
 
-lens2_gmst_arr = np.tile(lens2_gmst.values, lens2_tmax.shape[0])
-lens2_tmax_arr = np.ravel(lens2_tmax.values)
+lens1_gmst_arr = np.tile(lens1_gmst.values, lens1_tmax.shape[0])
+lens1_tmax_arr = np.ravel(lens1_tmax.values)
 
-xopt = pmath.mle_norm_2d(lens2_tmax_arr, lens2_gmst_arr, [29.55, 1.03, 1.11])
+xopt = pmath.mle_norm_2d(lens1_tmax_arr, lens1_gmst_arr, [29.55, 1.03, 1.11])
 
 mu0, sigma0, alpha = xopt
-mu = mu0 + alpha*lens2_gmst_full
+mu = mu0 + alpha*lens1_gmst_full
 
 mu_MLE_ac = mu.sel(time = ac_year)
 mu_MLE_fu = mu.sel(time = fu_year)
 sigma_MLE = sigma0
 
 # define tau
-tau_ac = 1397
+tau_ac = 241
 
 # get ev value 
 ev = norm.isf(1/tau_ac, mu_MLE_ac, sigma_MLE)
@@ -62,15 +62,15 @@ df.loc['far a-f', 'raw'] = far_af
 df.loc['delta a-f', 'raw'] = delta
 
 # bootstrap MLE
-nboot = 1000
-filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS2_GMST_'+str(nboot)+'_normal_future_QN_NN.nc'
+nboot = 100
+filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS1_GMST_'+str(nboot)+'_normal_future_CU_NN.nc'
 bspreds = xr.open_dataset(filepath)
 bspreds_mu0 = bspreds.mu0.values
 bspreds_sigma0 = bspreds.sigma0.values
 bspreds_alpha = bspreds.alpha.values
 
-Tac = lens2_gmst_full.sel(time = ac_year).values
-Tfu = lens2_gmst_full.sel(time = fu_year).values
+Tac = lens1_gmst_full.sel(time = ac_year).values
+Tfu = lens1_gmst_full.sel(time = fu_year).values
 
 mu_ac_dist = bspreds_mu0 + bspreds_alpha*Tac
 mu_fu_dist = bspreds_mu0 + bspreds_alpha*Tfu
@@ -107,4 +107,4 @@ for col, thr in mapping:
     df.loc['delta a-f', col] = np.quantile(bspreds_delta, [thr], axis = 0)
 
 df = df.applymap(lambda x: round(float(x),2))
-df.to_csv(f'../../../megafires_data/output/metrics_LENS2_MLE_{ac_year}_{fu_year}_normfit_2010_2100_by_return_period_QN_NN.csv')
+df.to_csv(f'../../../megafires_data/output/metrics_LENS1_MLE_{ac_year}_{fu_year}_normfit_2010_2100_by_return_period_CU_NN.csv')

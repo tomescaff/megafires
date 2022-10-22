@@ -15,7 +15,7 @@ columns = ['raw', '95ci lower', '95ci upper', '1percentile']
 df = pd.DataFrame(columns=columns, index=index)
 
 ac_year = '2017'
-cf_year = '1880'
+cf_year = '1930'
 
 # raw values
 

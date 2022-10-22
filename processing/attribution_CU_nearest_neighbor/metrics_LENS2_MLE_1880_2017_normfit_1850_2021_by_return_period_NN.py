@@ -8,6 +8,7 @@ sys.path.append('../../processing')
 
 import processing.gmst as gmst
 import processing.stations as stns
+import processing.lens as lens
 import processing.math as pmath
 
 index = ['tau cf', 'tau ac', 'rr c-a', 'far c-a', 'delta c-a']
@@ -19,26 +20,29 @@ cf_year = '1880'
 
 # raw values
 
-smf = gmst.get_gmst_annual_5year_smooth()
-qnf = stns.get_QN_tmax_jan()
+lens2_gmst_full = gmst.get_gmst_annual_lens2_ensmean()
+lens2_tmax_full = lens.get_LENS2_jan_tmax_CU_NN()
 
-sm = smf.sel(time=slice('1930','2021'))
-qn = qnf.sel(time=slice('1930','2021'))
+lens2_gmst = lens2_gmst_full.sel(time=slice('1850', '2021'))
+lens2_tmax = lens2_tmax_full.sel(time=slice('1850', '2021'))
 
-sm_no2017 = sm.where(sm.time.dt.year != 2017, drop=True)
-qn_n02017 = qn.where(qn.time.dt.year != 2017, drop=True)
+lens2_gmst_arr = np.tile(lens2_gmst.values, lens2_tmax.shape[0])
+lens2_tmax_arr = np.ravel(lens2_tmax.values)
 
-xopt = pmath.mle_norm_2d(qn_n02017.values, sm_no2017.values, [15, 2, 0.5])
+xopt = pmath.mle_norm_2d(lens2_tmax_arr, lens2_gmst_arr, [29.55, 1.03, 1.11])
 
 mu0, sigma0, alpha = xopt
-mu = mu0 + alpha*smf
+mu = mu0 + alpha*lens2_gmst_full
 
 mu_MLE_ac = mu.sel(time = ac_year)
 mu_MLE_cf = mu.sel(time = cf_year)
 sigma_MLE = sigma0
 
+# define tau
+tau_ac = 241
+
 # get ev value 
-ev = qn.sel(time='2017')
+ev = norm.isf(1/tau_ac, mu_MLE_ac, sigma_MLE)
 
 # get return periods
 tau_cf = 1/norm.sf(ev, mu_MLE_cf, sigma_MLE)
@@ -59,14 +63,14 @@ df.loc['delta c-a', 'raw'] = delta
 
 # bootstrap MLE
 nboot = 1000
-filepath = '../../../megafires_data/output/MLE_tasmax_jan_QN_GMST_'+str(nboot)+'_normal_validation.nc'
+filepath = '../../../megafires_data/output/MLE_tasmax_jan_LENS2_GMST_'+str(nboot)+'_normal_evaluation_CU_NN.nc'
 bspreds = xr.open_dataset(filepath)
 bspreds_mu0 = bspreds.mu0.values
 bspreds_sigma0 = bspreds.sigma0.values
 bspreds_alpha = bspreds.alpha.values
 
-Tac = smf.sel(time = ac_year).values
-Tcf = smf.sel(time = cf_year).values
+Tac = lens2_gmst_full.sel(time = ac_year).values
+Tcf = lens2_gmst_full.sel(time = cf_year).values
 
 mu_ac_dist = bspreds_mu0 + bspreds_alpha*Tac
 mu_cf_dist = bspreds_mu0 + bspreds_alpha*Tcf
@@ -103,4 +107,4 @@ for col, thr in mapping:
     df.loc['delta c-a', col] = np.quantile(bspreds_delta, [thr], axis = 0)
 
 df = df.applymap(lambda x: round(float(x),2))
-df.to_csv(f'../../../megafires_data/output/metrics_QN_MLE_{cf_year}_{ac_year}_normfit_1930_2021.csv')
+df.to_csv(f'../../../megafires_data/output/metrics_LENS2_MLE_{cf_year}_{ac_year}_normfit_1850_2021_by_return_period_CU_NN.csv')
