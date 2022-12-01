@@ -518,7 +518,7 @@ def get_tau(z):
     # compute tail and tau
     for i in range(m):
         x = u[i]
-        tail[i] = np.sum(z>=x)/n
+        tail[i] = np.sum(z>=x)/(n+1)
         tau[i] = 1/tail[i]
 
     return u, tau
@@ -562,3 +562,32 @@ def compute_trend(xr_array):
     da_pvalue = xr.DataArray(matrix_pvalue, coords = [xr_array.run, xr_array.lat, xr_array.lon], dims=['run', 'lat', 'lon'])
     ds_out = xr.Dataset({'slope':da_slope, 'intercept':da_intercept, 'rvalue':da_rvalue, 'pvalue':da_pvalue})
     return ds_out
+
+def get_CR2METv25():
+    
+    # define path of netcdf file with data
+    filepath = '../../../megafires_data/CR2MET/CR2MET_tmax_v2.5_mon_1960_2021_005deg.nc'
+
+    # open dataset
+    ds = xr.open_dataset(filepath, decode_times=False)
+
+    # reassign time
+    ds['time'] = pd.date_range('1960-01', '2021-12', freq='1MS')
+
+    return ds['tmax']
+
+def get_CR2METv25_jan():
+    
+    da = get_CR2METv25()
+
+    return da.where(da.time.dt.month==1, drop=True)
+
+def get_cl_mask():
+    
+    # define path of netcdf file with data
+    filepath = '../../../megafires_data/CR2MET/CR2MET_clmask_v2.5_mon_1960_2021_005deg.nc'
+
+    # open dataset
+    return xr.open_dataset(filepath)['cl_mask']
+
+    
