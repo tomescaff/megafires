@@ -33,7 +33,7 @@ ax = plt.axes(projection=ccrs.PlateCarree())
 ax.set_extent([-74.5, -68, -40, -26], crs=ccrs.PlateCarree())
 
 # define and set  x and y ticks
-xticks = [ -72, -70, -68]
+xticks = [ -74, -72, -70, -68]
 yticks = [ -40, -38, -36, -34, -32, -30, -28, -26]
 ax.set_xticks( xticks, crs=ccrs.PlateCarree())
 ax.set_yticks( yticks, crs=ccrs.PlateCarree())

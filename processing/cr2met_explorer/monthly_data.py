@@ -16,7 +16,7 @@ def monthly_mean_with_nans(x):
     ans = red(x)
     return ans
 
-stnfile = '../../../megafires_data/stns/cr2_tasmaxDaily_2022.nc'
+stnfile = '../../../megafires_data/CR2_explorer/cr2_tasmaxDaily_2022.nc'
 
 ds = xr.open_dataset(stnfile)
 ds = ds.where( (ds.lat <= -26) & (ds.lat >= -40), drop=True)
@@ -37,6 +37,14 @@ clim_period = tmax_jan.sel(time=slice('1991', '2020'))
 clim = xr.apply_ufunc(monthly_mean_with_nans, clim_period, input_core_dims=[["time"]], vectorize = True)
 anom = tmax_jan.sel(time='2017') - clim
 anom = anom.dropna('stn')
+anom_data = anom.squeeze()
+anom_lats = lat.sel(stn=anom_data.stn)
+anom_lons = lon.sel(stn=anom_data.stn)
+anom_alts = alt.sel(stn=anom_data.stn)
+anom_name = name.sel(stn=anom_data.stn)
+
+ds_anom = xr.Dataset({'data':anom_data, 'lat':anom_lats, 'lon':anom_lons, 'alt':anom_alts, 'name':anom_name})
+ds_anom.to_netcdf('../../../megafires_data/CR2_explorer/cr2_tasmax_anom2017_refperiod_1991_2020_26deg_40degS.nc', encoding={"name": {"dtype": "str"}})
 
 # fro the return period map
 mat = np.zeros((tmax_jan.stn.size,))
@@ -50,11 +58,14 @@ for i in range(tmax_jan.stn.size):
     mat[i] = k
 
 mask = mat>31
-tmax_jan_long_record = tmax_jan[:, mask]
-lat_long_record = lat[mask]
-lon_long_record = lon[mask]
-alt_long_record = alt[mask]
-name_long_record = name[mask]
+long_record_data = tmax_jan[:, mask]
+long_record_lats = lat[mask]
+long_record_lons = lon[mask]
+long_record_alts = alt[mask]
+long_record_name = name[mask]
+
+ds_long_record = xr.Dataset({'data':long_record_data, 'lat':long_record_lats, 'lon':long_record_lons, 'alt':long_record_alts, 'name':long_record_name})
+ds_long_record.to_netcdf('../../../megafires_data/CR2_explorer/cr2_tasmax_stns_data_before_1990_26deg_40degS.nc', encoding={"name": {"dtype": "str"}})
 
 
 

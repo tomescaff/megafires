@@ -11,6 +11,7 @@ from cartopy.io.shapereader import Reader
 
 import sys
 import cmaps
+import xarray as xr
 
 sys.path.append('../../processing')
 
@@ -30,11 +31,17 @@ mask = ut.get_cl_mask()
 da = da*mask
 
 # read stations
-stnfile = '../../../megafires_data/series/CR2_explorador_tasmax_ene_2017_anom_1991_2020_80_80.csv'
-df = pd.read_csv(stnfile)
-stn_lon = df.Longitud.values
-stn_lat = df.Latitud.values
-stn_val = df.Valor.values
+# stnfile = '../../../megafires_data/series/CR2_explorador_tasmax_ene_2017_anom_1991_2020_80_80.csv'
+# df = pd.read_csv(stnfile)
+# stn_lon = df.Longitud.values
+# stn_lat = df.Latitud.values
+# stn_val = df.Valor.values
+
+stnfile = '../../../megafires_data/CR2_explorer/cr2_tasmax_anom2017_refperiod_1991_2020_26deg_40degS.nc'
+ds = xr.open_dataset(stnfile)
+stn_lon = ds.lon.values
+stn_lat = ds.lat.values
+stn_val = ds.data.values
 
 fname = '../../../megafires_data/shp/Regiones/Regional.shp'
 
@@ -48,7 +55,7 @@ ax = plt.axes(projection=ccrs.PlateCarree())
 ax.set_extent([-74.5, -68, -40, -26], crs=ccrs.PlateCarree())
 
 # define and set  x and y ticks
-xticks = [ -72, -70, -68]
+xticks = [ -74, -72, -70, -68]
 yticks = [ -40, -38, -36, -34, -32, -30, -28, -26]
 ax.set_xticks( xticks, crs=ccrs.PlateCarree())
 ax.set_yticks( yticks, crs=ccrs.PlateCarree())
@@ -75,11 +82,11 @@ gl.ylocator = mticker.FixedLocator(yticks)
 # plot the climatology and reshape color bar 
 # amwg_blueyellowred
 # WhiteBlueGreenYellowRed
-pcm = ax.pcolormesh(da.lon.values, da.lat.values, da.values, cmap=cmaps.BlueWhiteOrangeRed, zorder=1, vmin=-3, vmax=3)
+pcm = ax.pcolormesh(da.lon.values, da.lat.values, da.values, cmap=cmaps.WhiteBlueGreenYellowRed, zorder=1, vmin=0, vmax=3.5)
 cbar = plt.colorbar(pcm, aspect = 40, pad=0.03)
 
 # plot the stations
-ax.scatter(stn_lon, stn_lat, s=10, c=stn_val, cmap=cmaps.amwg_blueyellowred, zorder=2, vmin=-3.5, vmax=3.5, edgecolors='k')
+ax.scatter(stn_lon, stn_lat, s=10, c=stn_val, cmap=cmaps.WhiteBlueGreenYellowRed, zorder=2, vmin=0, vmax=3.5, edgecolors='k')
 
 # draw the coastlines
 # land = cfeature.NaturalEarthFeature('physical', 'land',  scale=resol, edgecolor='k', facecolor='none')
@@ -101,5 +108,5 @@ for tick in ax.xaxis.get_major_ticks():
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(8) 
 
-# plt.savefig('../../../megafires_data/png/CR2METv25_jan_2017_tmax_anom_full_stations.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/CR2METv25_jan_2017_tmax_anom_full_stations.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
