@@ -2,6 +2,13 @@ import pandas as pd
 import xarray as xr
 import numpy as np
 from scipy import stats
+import fiona
+import shapely
+from shapely.ops import cascaded_union, unary_union
+from shapely import geometry
+from scipy.stats import norm
+from . import gmst
+from . import math as pmath
 
 # get Quinta Normal time series of tmax january monthly mean
 def get_QN_series():
@@ -590,4 +597,90 @@ def get_cl_mask():
     # open dataset
     return xr.open_dataset(filepath)['cl_mask']
 
-    
+def get_regional_mask():
+
+    cr2met_mask = get_cl_mask()
+    mask = cr2met_mask.where((cr2met_mask.lat >= -36) & (cr2met_mask.lat <= -32))
+    return mask
+
+def get_regional_shape():
+
+    mask = get_regional_mask()
+    lat = mask.lat
+    lon = mask.lon
+    n, m = mask.shape
+    left = []
+    right = []
+    for i in range(n):
+        valid = False
+        for j in range(m):
+            point = not np.isnan(mask[i,j].values)
+            if point is True and valid is False:
+                left.append((float(lon[j].values), float(lat[i].values)))
+                valid = True
+            if point is True and valid is True:
+                continue
+            if point is False and valid is True:
+                right.append((float(lon[j-1].values), float(lat[i].values)))
+                valid = False
+            if point is False and valid is False:
+                continue
+    points = left + right[::-1] + [left[0]]
+    poly = geometry.Polygon(points)
+    return poly
+
+def get_regional_index():
+
+    mask = get_regional_mask()
+    cr2met = get_CR2METv25_jan()
+    cr2met_masked = cr2met*mask
+    series = cr2met_masked.mean(['lat', 'lon'])
+    return series
+
+def get_return_period_cr2met():
+
+    cr2met = get_CR2METv25_jan()
+    mask = get_cl_mask()
+    cr2met = cr2met*mask
+    t,n,m = cr2met.shape
+    matrix = np.zeros((n,m))
+
+    sm = gmst.get_gmst_annual_5year_smooth().sel(time=slice('1960', '2021'))
+    sm_no2017 = sm.where(sm.time.dt.year != 2017, drop=True)
+
+    for i in range(n):
+        for j in range(m):
+            if np.isnan(mask[i,j].values):
+                matrix[i,j] = np.nan
+            else:
+                series = cr2met[:, i,j]
+                series_n02017 = series.where(series.time.dt.year != 2017, drop=True)
+                xopt = pmath.mle_norm_2d(series_n02017.values, sm_no2017.values, [15, 2, 0.5])
+
+                mu0, sigma0, alpha = xopt
+                mu = mu0 + alpha*sm
+
+                mu_MLE_ac = mu.sel(time = '2017')
+                sigma_MLE = sigma0
+
+                # get ev value 
+                ev = series.sel(time='2017')
+
+                # get return periods
+                tau_ac = 1/norm.sf(ev, mu_MLE_ac, sigma_MLE)
+                matrix[i,j] = tau_ac
+    da = xr.DataArray(matrix, coords = [cr2met.lat, cr2met.lon], dims=['lat', 'lon'])
+    return da
+            
+
+
+
+
+
+
+
+
+
+            
+
+

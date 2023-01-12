@@ -1,5 +1,7 @@
 import xarray as xr
 import numpy as np
+from . import utils as ut
+from shapely.geometry import Point
 
 def get_LENS_jan_tmax_QNW():
     # nearest neighbor
@@ -44,6 +46,26 @@ def get_LENS_jan_tmax_CH_NN():
     da = ds['TREFMXAV']#-273.15
     lat, lon = -36.5872, -72.0400
     da = da.sel(lat=lat, lon=lon%360, method = 'nearest')
+    da = da.where(da.time.dt.month == 1, drop=True)
+    return da
+
+def get_LENS_jan_tmax_RI():
+    # spamean
+    basedir = '../../../megafires_data/LENS_ALL/'
+    filename = 'LENS_tmax_mean_mon_chile.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV']#-273.15
+    
+    polygon = ut.get_regional_shape()
+    r, t, n, m = da.shape
+    for i in range(n):
+        for j in range(m):
+            point = Point((float(da.lon[j].values)+180)%360-180, float(da.lat[i].values))
+            if not polygon.contains(point):
+                da[:,:,i,j] = np.nan
+                
+    da = da.mean(['lat','lon'])
     da = da.where(da.time.dt.month == 1, drop=True)
     return da
 
@@ -135,6 +157,26 @@ def get_LENS2_jan_tmax_CH_NN():
     da = ds['TREFMXAV']-273.15
     lat, lon = -36.5872, -72.0400
     da = da.sel(lat=lat, lon=lon%360, method = 'nearest')
+    da = da.where(da.time.dt.month == 1, drop=True)
+    return da
+
+def get_LENS2_jan_tmax_RI():
+    # spamean
+    basedir = '../../../megafires_data/LENS2_ALL/'
+    filename = 'LENS2_tmax_mean_mon.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV']-273.15
+
+    polygon = ut.get_regional_shape()
+    r, t, n, m = da.shape
+    for i in range(n):
+        for j in range(m):
+            point = Point((float(da.lon[j].values)+180)%360-180, float(da.lat[i].values))
+            if not polygon.contains(point):
+                da[:,:,i,j] = np.nan
+                
+    da = da.mean(['lat','lon'])
     da = da.where(da.time.dt.month == 1, drop=True)
     return da
 

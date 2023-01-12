@@ -223,6 +223,20 @@ def get_CH_tmax_janfeb():
     time = series_jan.time
     da = xr.DataArray(data, coords=[time], dims=['time'])
     return da
+
+# get Quinta Normal time series of daily tmax from 1911 to 2022
+def get_QN_daily_tmax_1911_2022():
+
+    # define path of csv file with data
+    filepath = '../../../megafires_data/QN/T_maxima_diaria_QN_1911_2022.csv'
+
+    # read the csv file using pandas
+    df = pd.read_csv(filepath, decimal=".", sep=';')
+
+    # select january tmax
+    return df
+    
+    
     
 
 
