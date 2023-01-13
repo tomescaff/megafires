@@ -30,7 +30,7 @@ mask = ut.get_cl_mask()
 da = da*mask
 
 # read stations
-stnfile = '../../../megafires_data/CR2_explorer/cr2_tasmax_jan_2017_mean_80.csv'
+stnfile = '../../../megafires_data/series/cr2_tasmax_jan_2017_mean_80.csv'
 df = pd.read_csv(stnfile)
 stn_lon = df.Longitud.values
 stn_lat = df.Latitud.values
