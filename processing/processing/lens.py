@@ -180,3 +180,11 @@ def get_LENS2_jan_tmax_RI():
     da = da.where(da.time.dt.month == 1, drop=True)
     return da
 
+def get_LENS2_dec_tmax_QNW():
+    # nearest neighbor
+    basedir = '../../../megafires_data/LENS2/'
+    filename = 'LENS2_tmax_mean_mon_QNW.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV']-273.15
+    return da[:, 11::12]

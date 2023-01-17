@@ -236,7 +236,24 @@ def get_QN_daily_tmax_1911_2022():
     # select january tmax
     return df
     
-    
+def get_QN_tmax_dec_1911_2022():
+
+    df = get_QN_daily_tmax_1911_2022()
+
+    # select january tmax
+    df_dec = df.iloc[-31:,:]
+
+    # create xarray with mean values rounded
+    years = np.arange(1911,2023)
+    data = np.zeros((years.size,))
+
+    for i, year in enumerate(years):
+        data[i] = round(df_dec.loc[:,f'{year}'].mean(), 1)
+
+    time = pd.date_range('1911-12-01', '2023-12-01',freq='1Y')
+
+    da = xr.DataArray(data, coords=[time], dims=['time'])
+    return da
     
 
 
