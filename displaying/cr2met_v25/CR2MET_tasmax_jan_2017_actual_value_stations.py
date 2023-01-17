@@ -23,6 +23,10 @@ dis_shape = ut.get_regional_shape()
 tmax = ut.get_CR2METv25_jan()
 tmax_2017 = tmax.sel(time='2017')
 
+# compute clim
+cr2 = ut.get_CR2MET_jan()
+cr2 = cr2.sel(time='2017').squeeze()
+
 da = tmax_2017
 da = da.squeeze()
 
@@ -109,5 +113,5 @@ for tick in ax.xaxis.get_major_ticks():
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(8) 
 
-# plt.savefig('../../../megafires_data/png/CR2METv25_jan_2017_actual_value_stations.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/CR2METv25_jan_2017_actual_value_stations.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
