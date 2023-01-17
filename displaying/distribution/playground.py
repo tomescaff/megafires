@@ -177,4 +177,14 @@ plt.show()
 
 tau = 1/norm.sf(qnf.sel(time='2020'), mu.sel(time='2020'), sigma0)
 tau2 = 1/norm.sf(qnf.sel(time='2020'), *norm.fit(qnf.values))
-print(tau, tau2)
+
+smf = gmst.get_gmst_annual_5year_smooth_2022()
+mu = mu0 + alpha*smf
+
+tau3 = 1/norm.sf(mu.sel(time='2020'), mu.sel(time='2020'), sigma0)
+tau4 = 1/norm.sf(mu.sel(time='2020'), mu.sel(time='1950'), sigma0)
+
+tau5 = 1/norm.sf(qnf.sel(time='2020'), mu.sel(time='2020'), sigma0)
+tau6 = 1/norm.sf(qnf.sel(time='2020'), mu.sel(time='1950'), sigma0)
+
+print(tau, tau2, tau3, tau4, tau5, tau6)
