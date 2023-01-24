@@ -66,4 +66,5 @@ axs[1].tick_params(direction="in")
 plt.axvline(qnf.sel(time='2020').values, ls='--', color='fuchsia', lw=1.0)
 plt.axvline(mu2, ls='--', color='k', lw=1.0)
 
+plt.savefig('../../../megafires_data/png/playground_distributions.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
