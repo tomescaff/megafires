@@ -62,8 +62,8 @@ ax_fet = fig.add_subplot(gs[0, 2], sharey=ax_line)
 # plot the mean value
 plt.sca(ax_line)
 plt.plot(x, x*0+qn.mean().values, lw=1.5, color='b', ls='--')
-plt.plot(qn.sel(time=slice('1928','1957')).time.dt.year, qn.sel(time=slice('1928','1957')).time.dt.year*0+qn.sel(time=slice('1928','1957')).mean().values, lw=1.5, color='green', ls='--')
-plt.plot(qn.sel(time=slice('1992','2021')).time.dt.year, qn.sel(time=slice('1992','2021')).time.dt.year*0+qn.sel(time=slice('1992','2021')).mean().values, lw=1.5, color='brown', ls='--')
+# plt.plot(qn.sel(time=slice('1928','1957')).time.dt.year, qn.sel(time=slice('1928','1957')).time.dt.year*0+qn.sel(time=slice('1928','1957')).mean().values, lw=1.5, color='green', ls='--')
+# plt.plot(qn.sel(time=slice('1992','2021')).time.dt.year, qn.sel(time=slice('1992','2021')).time.dt.year*0+qn.sel(time=slice('1992','2021')).mean().values, lw=1.5, color='brown', ls='--')
 
 print('first 30 years mean', qn.sel(time=slice('1928','1957')).mean())
 print('last 30 years mean', qn.sel(time=slice('1992','2021')).mean())
@@ -90,11 +90,8 @@ ax.spines.top.set_visible(False)
 ax.tick_params(direction="in")
 for tick in ax.xaxis.get_major_ticks():
     tick.label.set_fontsize(9) 
-    tick.label.set_weight('light') 
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(9) 
-    tick.label.set_weight('light')
-
 past_climate = qn.sel(time=slice('1928','1957'))
 psnt_climate = qn.sel(time=slice('1992','2021'))
 psnt_climate_year = psnt_climate.time.dt.year
@@ -119,10 +116,8 @@ ax.spines.top.set_visible(False)
 ax.tick_params(direction="in")
 for tick in ax.xaxis.get_major_ticks():
     tick.label.set_fontsize(0) 
-    tick.label.set_color('white') 
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(9) 
-    tick.label.set_weight('light')
 plt.ylabel('Tmax December (ºC)')
 
 plt.sca(ax_fet)
@@ -135,7 +130,6 @@ for tick in ax.xaxis.get_major_ticks():
     tick.label.set_color('white') 
 for tick in ax.yaxis.get_major_ticks():
     tick.label.set_fontsize(9) 
-    tick.label.set_weight('light')
 plt.bar([0], height=2020*slope + intercept-qn.mean().values, bottom=qn.mean().values, width=0.75, color='r', alpha=0.4)
 plt.bar([1.35], height=qn.sel(time='2020').values-qn.mean().values, bottom=qn.mean().values, width=0.75, color='b', alpha=0.4)
 plt.axhline(qn.mean().values,  lw=1.5, color='b', ls='--')
@@ -144,7 +138,7 @@ plt.xticks([0, 1.35])
 plt.errorbar(x=0, y=2020*slope + intercept, yerr=delta[x==2022], lw=1.1, color='grey', capsize=4, fmt = '.', capthick=1.3, ecolor='grey', alpha=1)
 
 plt.ylim([22,29])
-# plt.savefig('../../../megafires_data/png/QN_series_with_trend_RR_FET_dec_2022.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/playground_QN_series_with_trend_RR_FET_dec_2022.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
 
 mu_plus_1sigma = mu + sigma0
@@ -172,7 +166,7 @@ ax.xaxis.set_ticks_position('both')
 ax.tick_params(direction="in")
 plt.xlabel('Global mean surface temperature anomaly (smoothed) [ºC]')
 plt.ylabel('December Tmax [ºC]')
-#plt.savefig('../../../megafires_data/png/QN_MLE_tasmax_GMST_scatter_fit_1930_2022_dec_2022.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/playground_QN_MLE_tasmax_GMST_scatter_fit_1930_2022_dec_2022.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
 
 tau = 1/norm.sf(qnf.sel(time='2020'), mu.sel(time='2020'), sigma0)
