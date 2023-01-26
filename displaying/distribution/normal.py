@@ -68,3 +68,6 @@ plt.axvline(mu2, ls='--', color='k', lw=1.0)
 
 plt.savefig('../../../megafires_data/png/playground_distributions.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
+
+tau_ac1 = 1/norm.sf(qnf.sel(time='2020').values, mu1, sigma1)
+tau_ac2 = 1/norm.sf(qnf.sel(time='2020').values, mu2, sigma2)
