@@ -25,7 +25,6 @@ lats = [-33.45, -34.97, -36.59, -29.92, -36.78, -38.77, -39.65, -33.39, -33.45, 
 lons = [-70.68, -71.22, -72.04, -71.20, -73.06, -72.64, -73.08, -70.79, -70.55, -71.61]
 retp = [1.4e3, 2.4e2, 1.0e1, 2.6e1, 5.6e1, 1.6e0, 1.6e0, 2.3e3, 1.3e3, 2.7e1]
 
-
 fname = '../../../megafires_data/shp/Regiones/Regional.shp'
 
 # create figure
@@ -93,5 +92,5 @@ for tick in ax.yaxis.get_major_ticks():
 #circle_ch = plt.Circle((-72.0400, -36.5872), 0.2, color='k', fill=False, zorder=7, lw=0.5)
 #circle_cc = plt.Circle((-73.0622, -36.7792), 0.2, color='k', fill=False, zorder=7, lw=0.5)
 
-# plt.savefig('../../../megafires_data/png/CR2METv25_jan_1960_2021_return_period_2017.png', dpi=300)#, bbox_inches = 'tight', pad_inches = 0)
+plt.savefig('../../../megafires_data/png/CR2METv25_jan_1960_2021_return_period_2017_stations.png', dpi=300)#, bbox_inches = 'tight', pad_inches = 0)
 plt.show()

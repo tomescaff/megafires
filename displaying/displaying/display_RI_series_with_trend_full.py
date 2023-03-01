@@ -42,7 +42,7 @@ def linear_trend(se):
     return x, y, slope, trend, y_inf, y_sup
 
 # create figure
-fig, axs = plt.subplots(3,1, figsize=(8,10))
+fig, axs = plt.subplots(3,1, figsize=(9,10))
 plt.rcParams["font.family"] = 'Arial'
 plt.rcParams["font.size"] = 10
 ax_qn = axs[0]
@@ -65,7 +65,7 @@ plt.plot(se.sel(time='2017').time.dt.year, se.sel(time='2017').values, lw=1, mar
 
 # set grid
 plt.grid(lw=0.4, ls='--', color='grey')
-plt.xlim(1925, 2022)
+plt.xlim(1928, 2022)
 plt.ylim(27, 33.6)
 
 # set title and labels
@@ -96,7 +96,7 @@ plt.plot(se.sel(time='2017').time.dt.year, se.sel(time='2017').values, lw=1, mar
 
 # set grid
 plt.grid(lw=0.4, ls='--', color='grey')
-plt.xlim(1925, 2022)
+plt.xlim(1928, 2022)
 plt.ylim(27, 33.6)
 
 # set title and labels
@@ -127,7 +127,7 @@ plt.plot(se.sel(time='2017').time.dt.year, se.sel(time='2017').values, lw=1, mar
 
 # set grid
 plt.grid(lw=0.4, ls='--', color='grey')
-plt.xlim(1959, 2022)
+plt.xlim(1928, 2022)
 plt.ylim(20.6, 26)
 
 # set title and labels
@@ -141,5 +141,5 @@ ax.spines.right.set_visible(False)
 ax.spines.top.set_visible(False)
 ax.tick_params(direction="in")
 plt.tight_layout()
-plt.savefig('../../../megafires_data/png/QN_CU_RI_series_with_trend_full.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+# plt.savefig('../../../megafires_data/png/QN_CU_RI_series_with_trend_full.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
