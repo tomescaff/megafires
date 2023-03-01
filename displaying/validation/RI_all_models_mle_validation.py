@@ -15,7 +15,7 @@ lens1 = xr.open_dataset(join(relpath, filename))
 filename = 'MLE_tasmax_jan_LENS2_GMST_10_normal_validation_RI.nc'
 lens2 = xr.open_dataset(join(relpath, filename))
 
-model_names = ['Observation', 'CESM1-LENS', 'CESM2-LENS', 'EC_Earth3', 'CMIP6']
+model_names = ['CR2MET', 'CESM1-LENS', 'CESM2-LENS', 'EC_Earth3', 'CMIP6']
 models = [qn, lens1, lens2, lens2, lens2]
 
 fig, axs = plt.subplots(3,1,figsize=(8,7))
@@ -38,7 +38,7 @@ for bar, color in zip(barlist, colors):
     bar.set_color(color)
 plt.scatter(center, y_pos, s=200, marker='|', color=['k', 'k', 'k', 'none', 'none'], zorder=4)
 plt.yticks(y_pos, model_names)
-#plt.xlim([28,30])
+plt.xlim([22.4,23.5])
 ax.set_axisbelow(True)
 plt.grid( lw=0.4, ls='--', color='grey', zorder=-4)
 ax.invert_yaxis()  # labels read top-to-bottom
@@ -63,7 +63,7 @@ for bar, color in zip(barlist, colors):
     bar.set_color(color)
 plt.scatter(center, y_pos, s=200, marker='|', color=['k', 'k', 'k', 'none', 'none'], zorder=4)
 plt.yticks(y_pos, model_names)
-plt.xlim([0.0,2.0])
+plt.xlim([0.4,1.5])
 ax.set_axisbelow(True)
 plt.grid( lw=0.4, ls='--', color='grey', zorder=-4)
 ax.invert_yaxis()  # labels read top-to-bottom
@@ -88,7 +88,7 @@ for bar, color in zip(barlist, colors):
     bar.set_color(color)
 plt.scatter(center, y_pos, s=200, marker='|', color=['k', 'k', 'k', 'none', 'none'], zorder=4)
 plt.yticks(y_pos, model_names)
-plt.xlim([0.5, 2.5])
+plt.xlim([0.4, 1.5])
 ax.set_axisbelow(True)
 ax.invert_yaxis()  # labels read top-to-bottom
 plt.grid( lw=0.4, ls='--', color='grey', zorder=-4)
