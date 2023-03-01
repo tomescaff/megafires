@@ -114,6 +114,24 @@ def get_LENS_jan_tmax_CH_control_run():
     da = da.where(da.time.dt.month == 1, drop=True)
     return da
 
+def get_LENS_jan_tmax_RI_control_run():
+    basedir = '../../../megafires_data/LENS_ALL/'
+    filename = 'LENS_tasmax_mon_mean_control_run_chile.nc'
+    filepath = basedir + filename
+    ds = xr.open_dataset(filepath)
+    da = ds['TREFMXAV'] - 273.15
+    polygon = ut.get_regional_shape()
+    t, n, m = da.shape
+    for i in range(n):
+        for j in range(m):
+            point = Point((float(da.lon[j].values)+180)%360-180, float(da.lat[i].values))
+            if not polygon.contains(point):
+                da[:,i,j] = np.nan
+                
+    da = da.mean(['lat','lon'])
+    da = da.where(da.time.dt.month == 1, drop=True)
+    return da
+
 def get_LENS2_jan_tmax_QNW():
     # nearest neighbor
     basedir = '../../../megafires_data/LENS2/'

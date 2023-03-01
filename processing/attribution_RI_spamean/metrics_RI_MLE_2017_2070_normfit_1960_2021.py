@@ -1,0 +1,112 @@
+import sys
+import numpy as np
+import xarray as xr
+import pandas as pd
+from scipy.stats import norm
+
+sys.path.append('../../processing')
+
+import processing.gmst as gmst
+import processing.utils as ut
+import processing.math as pmath
+
+index = ['tau ac', 'tau fu', 'rr a-f', 'far a-f', 'delta a-f']
+columns = ['raw', '95ci lower', '95ci upper', '1percentile']
+df = pd.DataFrame(columns=columns, index=index)
+
+ac_year = '2017'
+fu_year = '2070'
+
+lens1_gmst_full = gmst.get_gmst_annual_lens1_ensmean()
+
+T2070 = lens1_gmst_full.sel(time='2070').values
+
+# raw values
+
+smf = gmst.get_gmst_annual_5year_smooth()
+qnf = ut.get_regional_index()
+
+sm = smf.sel(time=slice('1960','2021'))
+qn = qnf.sel(time=slice('1960','2021'))
+
+sm_no2017 = sm.where(sm.time.dt.year != 2017, drop=True)
+qn_n02017 = qn.where(qn.time.dt.year != 2017, drop=True)
+
+xopt = pmath.mle_norm_2d(qn_n02017.values, sm_no2017.values, [15, 2, 0.5])
+
+mu0, sigma0, alpha = xopt
+mu = mu0 + alpha*smf
+
+
+
+mu_MLE_ac = mu.sel(time = ac_year)
+mu_MLE_fu = mu0 + alpha*T2070
+sigma_MLE = sigma0
+
+# get ev value 
+ev = qn.sel(time='2017')
+
+# get return periods
+tau_fu = 1/norm.sf(ev, mu_MLE_fu, sigma_MLE)
+tau_ac = 1/norm.sf(ev, mu_MLE_ac, sigma_MLE)
+
+# get rr and far
+rr_af = tau_ac/tau_fu
+far_af = (tau_ac-tau_fu)/tau_ac
+
+# get delta
+delta = ev - norm.isf(1/tau_ac, mu_MLE_fu, sigma_MLE)
+
+df.loc['tau fu', 'raw'] = tau_fu
+df.loc['tau ac', 'raw'] = tau_ac
+df.loc['rr a-f', 'raw'] = rr_af
+df.loc['far a-f', 'raw'] = far_af
+df.loc['delta a-f', 'raw'] = delta
+
+# bootstrap MLE
+nboot = 10
+filepath = '../../../megafires_data/output/MLE_tasmax_jan_RI_GMST_'+str(nboot)+'_normal_validation.nc'
+bspreds = xr.open_dataset(filepath)
+bspreds_mu0 = bspreds.mu0.values
+bspreds_sigma0 = bspreds.sigma0.values
+bspreds_alpha = bspreds.alpha.values
+
+Tac = smf.sel(time = ac_year).values
+Tfu = T2070
+
+mu_ac_dist = bspreds_mu0 + bspreds_alpha*Tac
+mu_fu_dist = bspreds_mu0 + bspreds_alpha*Tfu
+sigma_dist = bspreds_sigma0
+
+bspreds_tau_fu = np.zeros((nboot,))
+bspreds_tau_ac = np.zeros((nboot,))
+bspreds_rr_af = np.zeros((nboot,))
+bspreds_far_af = np.zeros((nboot,))
+bspreds_delta = np.zeros((nboot,))
+
+for i in range(nboot):
+
+    tau_fu_i = 1/norm.sf(ev, mu_fu_dist[i], sigma_dist[i])
+    tau_ac_i = 1/norm.sf(ev, mu_ac_dist[i], sigma_dist[i])
+
+    rr_af_i = tau_ac_i/tau_fu_i
+    far_af_i = (tau_ac_i-tau_fu_i)/tau_ac_i
+    delta_i = ev - norm.isf(1/tau_ac_i, mu_fu_dist[i], sigma_dist[i])
+
+    bspreds_tau_fu[i] = tau_fu_i
+    bspreds_tau_ac[i] = tau_ac_i
+    bspreds_rr_af[i] = rr_af_i
+    bspreds_far_af[i] = far_af_i
+    bspreds_delta[i] = delta_i
+
+mapping = [('95ci lower', 0.025), ('95ci upper', 0.975), ('1percentile', 0.01)]
+
+for col, thr in mapping:
+    df.loc['tau fu', col] = np.quantile(bspreds_tau_fu, [thr], axis = 0)
+    df.loc['tau ac', col] = np.quantile(bspreds_tau_ac, [thr], axis = 0)
+    df.loc['rr a-f', col] = np.quantile(bspreds_rr_af, [thr], axis = 0)
+    df.loc['far a-f', col] = np.quantile(bspreds_far_af, [thr], axis = 0)
+    df.loc['delta a-f', col] = np.quantile(bspreds_delta, [thr], axis = 0)
+
+df = df.applymap(lambda x: round(float(x),2))
+df.to_csv(f'../../../megafires_data/output/metrics_RI_MLE_{ac_year}_{fu_year}_normfit_1960_2021_nboot_{nboot}.csv')
