@@ -14,7 +14,7 @@ from scipy.stats import linregress
 from scipy.stats import t
 np.random.seed(seed=100)
 
-plt.rcParams['font.size'] = 10
+plt.rcParams['font.size'] = 12
 plt.rcParams['font.family'] = 'Arial'
 
 smf = gmst.get_gmst_annual_5year_smooth_2022().sel(time=slice('1928', '2022'))
@@ -40,7 +40,7 @@ mu2_ = mu02 + alpha2*smf
 mu0_ = mu02 + alpha2*gmst.get_gmst_annual_5year_smooth_2022()
 mu2 = mu0_.sel(time='2020').values
 
-mu0 = mu0_.sel(time='1880').values
+mu0 = mu0_.sel(time='2005').values
 
 tau_ac1 = 1/norm.sf(qnf.sel(time='2020').values, mu0, sigma2)
 tau_ac2 = 1/norm.sf(qnf.sel(time='2020').values, mu2, sigma2)
@@ -56,7 +56,7 @@ plt.fill_between(x, 0, norm.pdf(x, mu0, sigma2), where= x >= ev0, color='blue')
 plt.fill_between(x, 0, norm.pdf(x, mu0, sigma2), where= x >= qnf.sel(time='2020').values, color='red')
 plt.plot(x, norm.pdf(x, mu0, sigma2), lw=0.5, color='k')
 plt.ylim([0,0.5])
-plt.xlim([20, 32])
+plt.xlim([21, 31])
 axs[0].spines.right.set_visible(False)
 axs[0].spines.top.set_visible(False)
 axs[0].tick_params(direction="in")
@@ -68,13 +68,13 @@ plt.fill_between(x, 0, norm.pdf(x, mu2, sigma2), color='lightgrey')
 plt.fill_between(x, 0, norm.pdf(x, mu2, sigma2), where= x >= qnf.sel(time='2020').values, color='red')
 plt.plot(x, norm.pdf(x, mu2, sigma2), lw=0.5, color='k')
 plt.ylim([0,0.5])
-plt.xlim([20, 32])
+plt.xlim([21, 31])
 axs[1].spines.right.set_visible(False)
 axs[1].spines.top.set_visible(False)
 axs[1].tick_params(direction="in")
 plt.axvline(qnf.sel(time='2020').values, ls='--', color='fuchsia', lw=1.0)
 plt.axvline(mu2, ls='--', color='k', lw=1.0)
-
-plt.savefig('../../../megafires_data/png/playground_distributions_1880_2020.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
+print(mu0)
+plt.savefig('../../../megafires_data/png/playground_distributions_2000_2020.png', dpi=300, bbox_inches = 'tight', pad_inches = 0)
 plt.show()
 
