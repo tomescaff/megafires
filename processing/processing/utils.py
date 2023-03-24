@@ -107,6 +107,20 @@ def get_CR2MET():
 
     return ds['tmax']
 
+# get CR2MET tmax over Chilean territory for 2023 02
+def get_CR2MET_2023_02():
+
+    # define path of netcdf file with data
+    filepath = '../../../megafires_data/CR2MET/CR2MET_tmin_tmax_v2.5_R1_day_2023_02_005deg.nc'
+
+    # open dataset
+    ds = xr.open_dataset(filepath, decode_times=False)
+
+    # reassign time
+    ds['time'] = pd.date_range('2023-02-01', '2023-02-28', freq='1D')
+
+    return ds['tmax']
+
 # get CR2MET january tmax 
 def get_CR2MET_jan():
 
